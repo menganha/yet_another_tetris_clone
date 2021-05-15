@@ -12,10 +12,10 @@ Game::~Game()
 {
     SDL_DestroyRenderer(mRenderer);
     SDL_DestroyWindow(mWindow);
-    IMG_Quit();
-    SDL_Quit();
     mWindow = nullptr;
     mRenderer = nullptr;
+    IMG_Quit();
+    SDL_Quit();
 }
 
 int
@@ -61,29 +61,9 @@ void
 Game::gameLoop()
 {
     while (mIsRunning) {
-        handleInput();
         update();
         render();
         draw();
-    }
-}
-
-void
-Game::handleInput()
-{
-    while (SDL_PollEvent(&mEvent)) {
-        if (mEvent.type == SDL_QUIT) {
-            mIsRunning = false;
-        } else if (mEvent.type == SDL_KEYDOWN) {
-            // Select surfaces based on key press
-            switch (mEvent.key.keysym.sym) {
-                case SDLK_UP:
-                    break;
-
-                case SDLK_DOWN:
-                    break;
-            }
-        }
     }
 }
 
@@ -92,7 +72,12 @@ Game::update()
 {
     SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0x00);
     SDL_RenderClear(mRenderer);
-    mTetramino.update();
+    mController.update();
+    mTetramino.update(mController);
+
+    if (mController.mQuit) {
+        mIsRunning = false;
+    }
 }
 
 void

@@ -19,9 +19,14 @@ Tetramino::render(SDL_Renderer* renderer)
 }
 
 void
-Tetramino::update()
+Tetramino::update(Controller& controller)
 {
-    /* for (int idx = 0; idx < mSize; ++idx) { */
-    /*     mShape[0].x = mShape[0].x + 1; */
-    /* } */
+    for (int idx = 0; idx < mSize; ++idx) {
+        
+        if (controller.mRIGHT) {
+            mShape[idx].x = mShape[idx].x + constant::CELL_SIZE;
+        } else if (controller.mLEFT) {
+            mShape[idx].x = mShape[idx].x - constant::CELL_SIZE;
+        }
+    }
 }

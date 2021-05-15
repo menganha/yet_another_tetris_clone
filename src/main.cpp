@@ -1,7 +1,7 @@
 #include "game.h"
 
 int
-main(int argc, char* args[])
+main()
 {
     Game gameApp = Game();
     gameApp.gameLoop();
