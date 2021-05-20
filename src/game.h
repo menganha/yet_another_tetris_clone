@@ -3,9 +3,12 @@
 
 #include "constant.h"
 #include "controller.h"
-#include "tetramino.h"
+#include "tetromino.h"
+#include "tetromino_manager.h"
+#include "tetromino_type.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <array>
 #include <iostream>
 
 class Game
@@ -22,7 +25,8 @@ class Game
     Controller mController;
     SDL_Window* mWindow;
     SDL_Renderer* mRenderer;
-    Tetramino mTetramino;
+    Tetromino* mTetromino;
+    TetrominoManager mTetrominoManager;
 
     int init();
     void update();

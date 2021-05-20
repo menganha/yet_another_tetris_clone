@@ -1,10 +1,11 @@
 #include "game.h"
 
 Game::Game()
+  : mTetrominoManager{}
 {
     if (!Game::init()) {
         mIsRunning = true;
-        mTetramino = Tetramino();
+        mTetromino = mTetrominoManager.get_next_tetronimo();
     }
 }
 
@@ -73,7 +74,12 @@ Game::update()
     SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0x00);
     SDL_RenderClear(mRenderer);
     mController.update();
-    mTetramino.update(mController);
+    mTetromino->update(mController);
+
+    if (mTetromino->has_landed()) {
+        mTetromino = mTetrominoManager.get_next_tetronimo();
+        mTetromino->resetPos();
+    }
 
     if (mController.mQuit) {
         mIsRunning = false;
@@ -83,7 +89,7 @@ Game::update()
 void
 Game::render()
 {
-    mTetramino.render(mRenderer);
+    mTetromino->render(mRenderer);
 }
 
 void
