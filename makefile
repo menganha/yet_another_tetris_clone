@@ -28,16 +28,16 @@ DEBUG_FLAGS := -fno-stack-protector
 
 #This is the main program target
 $(BIN_DIR)/$(EXECUTABLE): $(OBJS)
-	mkdir -p  $(BIN_DIR)
+	@mkdir -p  $(BIN_DIR)
 	$(CC) $(OBJS) $(COMPILER_FLAGS) -o $@
-	@compiledb make
+	compiledb -n make
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	mkdir -p $(BUILD_DIR)
+	@mkdir -p $(BUILD_DIR)
 	$(CC) -c $(COMPILER_FLAGS) $< -o $@
 
 json_compilation:
-	compiledb make
+	compiledb -n make
 
 debug: $(DBG_OBJS)
 	mkdir -p  $(BIN_DIR)
