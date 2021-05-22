@@ -23,6 +23,7 @@ public:
   bool has_landed();
   void set_gravity(const int gravity);
   void resetPos();
+  SDL_Point toGridCoord();
 
 private:
   void rotate();

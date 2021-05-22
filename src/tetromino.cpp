@@ -23,7 +23,7 @@ void
 Tetromino::resetPos()
 {
   for (int idx = 0; idx < mSize; idx++) {
-    mShape[idx] = { mLocalCoord[idx].x * constant::CELL_SIZE + 40,
+    mShape[idx] = { mLocalCoord[idx].x * constant::CELL_SIZE + constant::GRID_X0,
                     mLocalCoord[idx].y * constant::CELL_SIZE,
                     constant::CELL_SIZE,
                     constant::CELL_SIZE };
@@ -35,13 +35,13 @@ Tetromino::update(Controller& controller)
 {
   if (controller.mRIGHT &&
       std::any_of(mShape.begin(), mShape.end(), [](SDL_Rect rect) {
-        return rect.x >= constant::SCREEN_WIDTH - constant::CELL_SIZE;
+        return rect.x >= constant::GRID_X1-constant::CELL_SIZE;
       })) {
     return;
   }
   if (controller.mLEFT &&
       std::any_of(mShape.begin(), mShape.end(), [](SDL_Rect rect) {
-        return rect.x <= 0;
+        return rect.x <= constant::GRID_X0;
       })) {
     return;
   }
@@ -63,7 +63,7 @@ bool
 Tetromino::has_landed()
 {
   return std::any_of(mShape.begin(), mShape.end(), [](SDL_Rect rect) {
-    return rect.y > constant::SCREEN_HEIGHT;
+    return rect.y > constant::GRID_Y1;
   });
   /* resetPos(); */
 }

@@ -20,9 +20,10 @@ private:
     bool occupied{ false };
     int color{ 0 };
   };
-  std::array<std::array<Cell, constant::GRID_WIDTH>, constant::GRID_HEIGHT>
+  std::array<std::array<Cell, constant::N_HORIZ_CELLS>, constant::N_VERT_CELLS>
     mGrid;
 
+  const SDL_Point mOrigin;
   void clear_row();
   void render_lines(SDL_Renderer* renderer);
 };
