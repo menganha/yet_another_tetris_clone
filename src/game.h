@@ -3,6 +3,7 @@
 
 #include "constant.h"
 #include "controller.h"
+#include "grid.h"
 #include "tetromino.h"
 #include "tetromino_manager.h"
 #include "tetromino_type.h"
@@ -13,25 +14,26 @@
 
 class Game
 {
-  public:
-    Game();
-    ~Game();
+public:
+  Game();
+  ~Game();
 
-    void gameLoop();
+  void gameLoop();
 
-  private:
-    bool mIsRunning;
-    SDL_Event mEvent;
-    Controller mController;
-    SDL_Window* mWindow;
-    SDL_Renderer* mRenderer;
-    Tetromino* mTetromino;
-    TetrominoManager mTetrominoManager;
+private:
+  bool mIsRunning;
+  SDL_Event mEvent;
+  Controller mController;
+  SDL_Window* mWindow;
+  SDL_Renderer* mRenderer;
+  Tetromino* mTetromino;
+  TetrominoManager mTetrominoManager;
+  Grid* mGrid;
 
-    int init();
-    void update();
-    void render();
-    void draw();
+  int init();
+  void update();
+  void render();
+  void draw();
 };
 
 #endif
