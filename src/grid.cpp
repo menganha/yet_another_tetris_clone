@@ -11,12 +11,13 @@ Grid::Grid()
 bool
 Grid::update(const Tetromino* tetromino)
 {
+  bool has_landed{ false };
   if (Grid::collides_with_tetromino(tetromino)) {
     Grid::fill_grid(tetromino);
-    return true;
+    has_landed = true;
   }
-  return false;
   Grid::clear_completed_rows();
+  return has_landed;
 }
 
 bool
@@ -102,7 +103,7 @@ Grid::coord_to_rect(int ind_x, int ind_y)
 void
 Grid::clear_completed_rows()
 {
-  for (int idx{ constant::N_VERT_CELLS + 1 }; idx-- > 0;) {
+  for (int idx{ constant::N_VERT_CELLS }; idx-- > 0;) {
     if (std::all_of(
           mGrid[idx].begin(), mGrid[idx].end(), [](Cell cell) { return cell.occupied == true; })) {
       for (int idy{ 0 }; idy < constant::N_HORIZ_CELLS; ++idy) {

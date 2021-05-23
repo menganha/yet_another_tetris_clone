@@ -1,7 +1,7 @@
 #include "tetromino.h"
 
 Tetromino::Tetromino(std::array<SDL_Point, mSize> coordList)
-  : mGravity{ 3 }
+  : mGravity{ 2 }
   , mColor{ constant::BLUE }
   , mLocalCoord{ coordList }
 {
@@ -21,8 +21,8 @@ void
 Tetromino::resetPos()
 {
   for (int idx = 0; idx < mSize; idx++) {
-    mRects[idx] = { mLocalCoord[idx].x * constant::CELL_SIZE + constant::GRID_X0,
-                    mLocalCoord[idx].y * constant::CELL_SIZE + constant::GRID_Y0,
+    mRects[idx] = { (mLocalCoord[idx].x+3) * constant::CELL_SIZE + constant::GRID_X0,
+                    (mLocalCoord[idx].y-2) * constant::CELL_SIZE + constant::GRID_Y0,
                     constant::CELL_SIZE,
                     constant::CELL_SIZE };
   }
