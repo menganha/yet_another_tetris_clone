@@ -15,7 +15,7 @@ TetrominoManager::TetrominoManager()
 TetrominoManager::~TetrominoManager() {}
 
 Tetromino*
-TetrominoManager::get_next_tetronimo()
+TetrominoManager::get_next_tetromino()
 {
   // Improve the choosing of the tetromino. Not all conditions have been applied
   int choice = mDist(mMersenne);

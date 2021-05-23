@@ -13,7 +13,7 @@ public:
   TetrominoManager();
   ~TetrominoManager();
 
-  Tetromino* get_next_tetronimo();
+  Tetromino* get_next_tetromino();
 
 private:
   std::mt19937 mMersenne;
