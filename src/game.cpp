@@ -23,8 +23,7 @@ int
 Game::init()
 {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-    std::cout << "SDL could not initialize! SDL Error " << SDL_GetError()
-              << std::endl;
+    std::cout << "SDL could not initialize! SDL Error " << SDL_GetError() << std::endl;
     return -1;
   }
 
@@ -39,24 +38,13 @@ Game::init()
                              constant::SCREEN_HEIGHT,
                              SDL_WINDOW_SHOWN);
   if (mWindow == nullptr) {
-    std::cout << "Window could not be created! SDL Error: " << SDL_GetError()
-              << std::endl;
+    std::cout << "Window could not be created! SDL Error: " << SDL_GetError() << std::endl;
     return -1;
   }
 
-  mRenderer = SDL_CreateRenderer(
-    mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+  mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
   if (mRenderer == nullptr) {
-    std::cout << "Renderer could not be created SDL Error: " << SDL_GetError()
-              << std::endl;
-    return -1;
-  }
-
-  SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-
-  if (!IMG_Init(IMG_INIT_PNG)) {
-    std::cout << "SDL_image could not be initialized SDL Error: "
-              << SDL_GetError() << std::endl;
+    std::cout << "Renderer could not be created SDL Error: " << SDL_GetError() << std::endl;
     return -1;
   }
 
@@ -76,11 +64,8 @@ Game::gameLoop()
 void
 Game::update()
 {
-  SDL_SetRenderDrawColor(mRenderer,
-                         constant::BLACK.red,
-                         constant::BLACK.green,
-                         constant::BLACK.blue,
-                         constant::BLACK.alpha);
+  SDL_SetRenderDrawColor(
+    mRenderer, colors::BLACK.red, colors::BLACK.green, colors::BLACK.blue, colors::BLACK.alpha);
   SDL_RenderClear(mRenderer);
   mController.update();
   mTetromino->update(mController);

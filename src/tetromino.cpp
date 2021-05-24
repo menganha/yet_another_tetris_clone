@@ -1,8 +1,8 @@
 #include "tetromino.h"
 
-Tetromino::Tetromino(std::array<SDL_Point, mSize> coordList)
+Tetromino::Tetromino(const std::array<SDL_Point, mSize>& coordList, Color color)
   : mGravity{ 2 }
-  , mColor{ constant::BLUE }
+  , mColor{ color }
   , mLocalCoord{ coordList }
 {
   resetPos();
@@ -21,24 +21,23 @@ void
 Tetromino::resetPos()
 {
   for (int idx = 0; idx < mSize; idx++) {
-    mRects[idx] = { (mLocalCoord[idx].x+3) * constant::CELL_SIZE + constant::GRID_X0,
-                    (mLocalCoord[idx].y-2) * constant::CELL_SIZE + constant::GRID_Y0,
+    mRects[idx] = { (mLocalCoord[idx].x + 3) * constant::CELL_SIZE + constant::GRID_X0,
+                    (mLocalCoord[idx].y - 2) * constant::CELL_SIZE + constant::GRID_Y0,
                     constant::CELL_SIZE,
                     constant::CELL_SIZE };
   }
 }
 
 void
-Tetromino::update(Controller& controller)
+Tetromino::update(const Controller& controller)
 {
   if (controller.mRIGHT && std::any_of(mRects.begin(), mRects.end(), [](SDL_Rect rect) {
         return rect.x >= constant::GRID_X1 - constant::CELL_SIZE;
       })) {
     return;
   }
-  if (controller.mLEFT && std::any_of(mRects.begin(), mRects.end(), [](SDL_Rect rect) {
-        return rect.x <= constant::GRID_X0;
-      })) {
+  if (controller.mLEFT &&
+      std::any_of(mRects.begin(), mRects.end(), [](SDL_Rect rect) { return rect.x <= constant::GRID_X0; })) {
     return;
   }
 
@@ -58,8 +57,7 @@ Tetromino::update(Controller& controller)
 bool
 Tetromino::has_landed()
 {
-  return std::any_of(
-    mRects.begin(), mRects.end(), [](SDL_Rect rect) { return rect.y > constant::GRID_Y1; });
+  return std::any_of(mRects.begin(), mRects.end(), [](SDL_Rect rect) { return rect.y > constant::GRID_Y1; });
 }
 
 Tetromino::tetrominoRectCoord_t
@@ -79,4 +77,10 @@ Tetromino::get_containing_cell_indices() const
     cell_indices[idx].y = (mRects[idx].y - constant::GRID_Y0) / constant::CELL_SIZE;
   }
   return cell_indices;
+}
+
+Color
+Tetromino::get_color() const
+{
+  return mColor;
 }

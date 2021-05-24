@@ -17,7 +17,7 @@ public:
 
 private:
   std::mt19937 mMersenne;
-  std::uniform_int_distribution<> mDist{ 1, 6 };
+  std::uniform_int_distribution<> mDist{ 1, 7 };
   Tetromino* L_block;
   Tetromino* J_block;
   Tetromino* T_block;

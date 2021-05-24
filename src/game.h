@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "color.h"
 #include "constant.h"
 #include "controller.h"
 #include "grid.h"
