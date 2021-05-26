@@ -21,7 +21,7 @@ private:
     bool occupied{ false };
     Color color{ colors::WHITE };
   };
-  std::array<std::array<Cell, constant::N_HORIZ_CELLS>, constant::N_VERT_CELLS + 1> mGrid;
+  std::array<std::array<Cell, constant::N_COLS>, constant::N_ROWS + 1> mGrid;
   const SDL_Point mOrigin;
   SDL_Rect coord_to_rect(int idx_x, int idx_y);
   void clear_completed_rows();
