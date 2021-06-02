@@ -24,7 +24,7 @@ CC := g++
 LINKER_FLAGS := -lSDL2_image -lSDL2
 INCLUDE_FLAGS := #-Iinclude
 COMPILER_FLAGS := -Wall -Wextra -Wshadow -Wpedantic -x c++ -std=c++17 -MMD -MP $(LINKER_FLAGS)
-DEBUG_FLAGS := -g
+DEBUG_FLAGS := -g -O0
 
 # This is the main program target
 $(BIN_DIR)/$(EXECUTABLE): $(OBJS)

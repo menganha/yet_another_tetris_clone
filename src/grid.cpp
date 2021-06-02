@@ -4,56 +4,16 @@ Grid::Grid()
   : mOrigin{ constant::GRID_X0, constant::GRID_Y0 }
 {
   for (int idx{ 0 }; idx < constant::N_COLS; ++idx) {
-    mGrid[constant::N_ROWS][idx].occupied = true;
+    m_cellGrid[constant::N_ROWS][idx].occupied = true;
   }
 }
 
-bool
-Grid::update(const Tetromino* tetromino)
-{
-  bool has_landed{ false };
-  if (Grid::collides_with_tetromino(tetromino)) {
-    Grid::fill_grid(tetromino);
-    has_landed = true;
-  }
-  Grid::clear_completed_rows();
-  return has_landed;
-}
-
-bool
-Grid::collides_with_tetromino(const Tetromino* tetromino)
-{
-  Tetromino::tetrominoRectCoord_t tetrominoCoord = tetromino->get_coord();
-
-  for (int idx{ constant::N_ROWS + 1 }; idx-- > 0;) {
-    for (int idy{ 0 }; idy < constant::N_COLS; ++idy) {
-      if (!mGrid[idx][idy].occupied) {
-        continue;
-      }
-      /* SDL_Rect tmp_rect{ idy * constant::CELL_SIZE + constant::GRID_X0, */
-      /*                    idx * constant::CELL_SIZE + constant::GRID_Y0, */
-      /*                    constant::CELL_SIZE, */
-      /*                    constant::CELL_SIZE }; */
-      int grid_block_xCoord = idy * constant::CELL_SIZE + constant::GRID_X0;
-      int grid_block_yCoord = idx * constant::CELL_SIZE + constant::GRID_Y0;
-      for (auto rect : tetrominoCoord) {
-        /* if (SDL_HasIntersection(&rect, &tmp_rect)) { */
-        if (grid_block_yCoord < rect.y + constant::CELL_SIZE && grid_block_xCoord == rect.x) {
-          return true;
-        }
-      }
-    }
-  }
-  return false;
-}
+Grid::~Grid() {}
 
 void
-Grid::fill_grid(const Tetromino* tetromino)
+Grid::update()
 {
-  Color color = tetromino->get_color();
-  for (auto indices : tetromino->get_containing_cell_indices()) {
-    mGrid[indices.y][indices.x] = { true, color };
-  }
+  Grid::clear_completed_rows();
 }
 
 void
@@ -68,12 +28,12 @@ Grid::render_blocks(SDL_Renderer* renderer)
 {
   for (int idy{ 0 }; idy < constant::N_ROWS; ++idy) {
     for (int idx{ 0 }; idx < constant::N_COLS; ++idx) {
-      if (mGrid[idy][idx].occupied) {
+      if (m_cellGrid[idy][idx].occupied) {
         SDL_SetRenderDrawColor(renderer,
-                               mGrid[idy][idx].color.red,
-                               mGrid[idy][idx].color.green,
-                               mGrid[idy][idx].color.blue,
-                               mGrid[idy][idx].color.alpha);
+                               m_cellGrid[idy][idx].color.red,
+                               m_cellGrid[idy][idx].color.green,
+                               m_cellGrid[idy][idx].color.blue,
+                               m_cellGrid[idy][idx].color.alpha);
         SDL_Rect tmp_Rect = Grid::coord_to_rect(idx, idy);
         SDL_RenderFillRect(renderer, &tmp_Rect);
       }
@@ -114,11 +74,45 @@ Grid::coord_to_rect(int ind_x, int ind_y)
 void
 Grid::clear_completed_rows()
 {
-  for (int row{ constant::N_ROWS }; row-- > 0;) {
-    if (std::all_of(mGrid[row].begin(), mGrid[row].end(), [](Cell cell) { return cell.occupied == true; })) {
+  auto is_occupied = [](Cell cell) { return cell.occupied == true; };
+  int  n_completed_rows = 0;
+  int  starting_row = -1;
+  bool found = false;
+  int  row = constant::N_ROWS - 1;
+
+  while (std::any_of(m_cellGrid[row].begin(), m_cellGrid[row].end(), is_occupied) && row > 0) {
+    if (std::all_of(m_cellGrid[row].begin(), m_cellGrid[row].end(), is_occupied)) {
+      n_completed_rows += 1;
+      if (!found) {
+        found = true;
+        starting_row = row;
+      }
+    }
+    row -= 1;
+  }
+
+  if (found) {
+    for (int completed_row{ starting_row + 1 }; completed_row-- > 0;) {
       for (int col{ 0 }; col < constant::N_COLS; ++col) {
-        mGrid[row][col].occupied = false;
+        if (completed_row >= n_completed_rows) {
+          m_cellGrid[completed_row][col] = m_cellGrid[completed_row - n_completed_rows][col];
+        } else {
+          m_cellGrid[completed_row][col] = Cell{};
+        }
       }
     }
   }
+}
+
+Grid::Cell
+Grid::get_cell(int idx_x, int idx_y) const
+{
+  return m_cellGrid[idx_y][idx_x];
+}
+
+void
+Grid::set_cell(int idx_x, int idx_y, bool occupation, Color color)
+{
+  m_cellGrid[idx_y][idx_x].occupied = occupation;
+  m_cellGrid[idx_y][idx_x].color = color;
 }

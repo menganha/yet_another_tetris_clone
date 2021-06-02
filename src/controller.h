@@ -9,6 +9,7 @@ class Controller
     Controller();
     ~Controller();
     void update();
+    bool noAction() const;
     bool mUP;
     bool mDOWN;
     bool mLEFT;

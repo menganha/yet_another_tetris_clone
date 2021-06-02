@@ -7,6 +7,7 @@ Controller::Controller()
   , mRIGHT{ false }
   , mACTION{ false }
   , mPAUSE{ false }
+  , mQuit{ false }
 {}
 
 Controller::~Controller() {}
@@ -48,6 +49,12 @@ Controller::update()
         }
     }
   }
+}
+
+bool
+Controller::noAction() const
+{
+  return (!mUP && !mDOWN && !mLEFT && !mRIGHT && !mACTION);
 }
 
 void

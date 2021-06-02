@@ -7,7 +7,6 @@
 #include "grid.h"
 #include "tetromino.h"
 #include "tetromino_manager.h"
-#include "tetromino_type.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <array>
@@ -22,19 +21,19 @@ public:
   void gameLoop();
 
 private:
-  bool mIsRunning;
-  SDL_Event mEvent;
-  Controller mController;
-  SDL_Window* mWindow;
-  SDL_Renderer* mRenderer;
-  Tetromino* mTetromino;
+  bool             mIsRunning;
+  SDL_Event        mEvent;
+  Controller       mController;
+  SDL_Window*      mWindow;
+  SDL_Renderer*    mRenderer;
+  Tetromino*       mTetromino;
   TetrominoManager mTetrominoManager;
-  Grid* mGrid;
+  Grid             mGrid;
 
-  int init();
-  void update();
-  void render();
-  void draw();
+  int              init();
+  void             update();
+  void             render();
+  void             draw();
 };
 
 #endif

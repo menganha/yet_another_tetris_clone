@@ -5,7 +5,6 @@ Game::Game()
   if (!Game::init()) {
     mIsRunning = true;
     mTetromino = mTetrominoManager.get_next_tetromino();
-    mGrid = new Grid{};
   }
 }
 
@@ -68,12 +67,12 @@ Game::update()
     mRenderer, colors::BLACK.red, colors::BLACK.green, colors::BLACK.blue, colors::BLACK.alpha);
   SDL_RenderClear(mRenderer);
   mController.update();
-  mTetromino->update(mController);
-  bool tetromino_has_landed = mGrid->update(mTetromino);
+  mGrid.update();
+  mTetromino->update(mController, mGrid);
 
-  if (tetromino_has_landed) {
+  if (mTetromino->has_landed()) {
     mTetromino = mTetrominoManager.get_next_tetromino();
-    mTetromino->resetPos();
+    mTetromino->reset_position();
   }
 
   if (mController.mQuit) {
@@ -84,7 +83,7 @@ Game::update()
 void
 Game::render()
 {
-  mGrid->render(mRenderer);
+  mGrid.render(mRenderer);
   mTetromino->render(mRenderer);
 }
 
