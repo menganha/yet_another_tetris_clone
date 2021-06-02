@@ -30,7 +30,7 @@ Game::init()
     std::cout << "Warning: Linear texture filtering not enabled!" << std::endl;
   }
 
-  mWindow = SDL_CreateWindow("Tetris",
+  mWindow = SDL_CreateWindow("Yet Another Tetris Clone",
                              SDL_WINDOWPOS_UNDEFINED,
                              SDL_WINDOWPOS_UNDEFINED,
                              constant::SCREEN_WIDTH,
