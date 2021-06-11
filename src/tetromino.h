@@ -3,51 +3,38 @@
 
 #include "color.h"
 #include "constant.h"
-#include "controller.h"
 #include "grid.h"
 #include <SDL2/SDL.h>
 #include <algorithm>
 #include <array>
 
+// Tetrominos are defined with respect to a local frame of reference where the
+// point 3,3 is the rotation center
 class Tetromino
 {
-  // Tetrominos are defined with respect to a local frame of reference where the point 3,3 is the
-  // rotation center
-
 public:
   static const int mSize = 4;
-  using ElementCoord_t = std::array<SDL_Point, mSize>;
+  using ElementCoord = std::array<SDL_Point, mSize>;
 
-  Tetromino(ElementCoord_t local_coord_list, const Color color);
-  ~Tetromino();
-
-  void           render(SDL_Renderer* renderer);
-  void           update(const Controller& controller, Grid& grid);
-  bool           has_landed() const;
-  void           set_gravity(const int gravity);
-  void           reset_position();
-  Color          get_color() const;
-  ElementCoord_t get_coord() const;
-  ElementCoord_t get_containing_cell_indices(const ElementCoord_t absCoord) const;
+  Tetromino(ElementCoord local_coord_list, const Color color);
+  void         render(SDL_Renderer* renderer);
+  void         reset_position();
+  Color        get_color() const;
+  ElementCoord get_coord() const;
+  void         set_coord(ElementCoord absCoordinates, bool relative = false);
+  ElementCoord get_containing_cell_indices() const;
+  void         move(int delta_x, int delta_y);
+  bool         collides(const Grid& grid) const;
+  bool         lands(const Grid& grid) const;
+  void         rotate();
 
 private:
-  int            mGravity; // Should always be a positive integer
-  bool           mHasLanded;
-  SDL_Point      mFrameCoord; // Absolute coordinate of the Tetromino frame of reference
-  const Color    mColor;
-  ElementCoord_t mAbsCoord;   // Absolute coordinates of each tetromino
-  ElementCoord_t mLocalCoord; // Scaled local coordinates of each tetromino by the
-                              // factor 1/constant::CELL_SIZE
-
-  ElementCoord_t get_abs_coordinates(const SDL_Point      frameCoord,
-                                     const ElementCoord_t localCoord) const;
-  bool           has_collided(const ElementCoord_t absCoord, const Grid& grid) const;
-  bool           overlaps_blocks(const ElementCoord_t absCoord,
-                                 const Grid&          grid,
-                                 const bool           below = false) const;
-  void           fall(Grid& grid);
-  void           move(const Controller& controller, const Grid& grid);
-  void           rotate(const Grid& grid);
+  SDL_Point    frameCoord_; // Abs coord of the Tetromino frame of reference
+  const Color  color_;
+  ElementCoord abs_coord_;  // Abs coord of each tetromino block
+  ElementCoord localCoord_; // Rel coord of each tetromino block scaled by
+                            // 1/constant::CELL_SIZE
+  void         update_abs_coord();
 };
 
 #endif

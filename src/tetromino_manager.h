@@ -2,7 +2,6 @@
 #define TETROMINO_MANAGER_H
 
 #include "tetromino.h"
-#include "tetromino_type.h"
 #include <ctime>
 #include <random>
 

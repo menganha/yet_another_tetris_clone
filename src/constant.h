@@ -7,7 +7,7 @@ namespace constant {
 
 constexpr int SCREEN_WIDTH = 640;
 constexpr int SCREEN_HEIGHT = 480;
-constexpr int CELL_SIZE = 20;
+constexpr int CELL_SIZE = 23;
 constexpr int N_COLS = 10;
 constexpr int N_ROWS = 20;
 constexpr int GRID_X0 =

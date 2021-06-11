@@ -28,7 +28,7 @@ TetrominoManager::get_next_tetromino()
     return &J_block;
   } else if (choice == 5) {
     return &T_block;
-  } else if (choice == 5) {
+  } else if (choice == 6) {
     return &S_block;
   } else {
     return &O_block;

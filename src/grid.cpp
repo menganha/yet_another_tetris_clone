@@ -44,19 +44,30 @@ Grid::render_blocks(SDL_Renderer* renderer)
 void
 Grid::render_lines(SDL_Renderer* renderer)
 {
-  SDL_SetRenderDrawColor(
-    renderer, colors::WHITE.red, colors::WHITE.green, colors::WHITE.blue, colors::WHITE.alpha);
+  SDL_SetRenderDrawColor(renderer,
+                         colors::WHITE.red,
+                         colors::WHITE.green,
+                         colors::WHITE.blue,
+                         colors::WHITE.alpha);
   int xPos = mOrigin.x;
   int yPos = mOrigin.y;
   for (int idy{ 0 }; idy <= constant::N_ROWS; ++idy) {
-    SDL_RenderDrawLine(renderer, xPos, yPos, xPos + constant::N_COLS * constant::CELL_SIZE, yPos);
+    SDL_RenderDrawLine(renderer,
+                       xPos,
+                       yPos,
+                       xPos + constant::N_COLS * constant::CELL_SIZE,
+                       yPos);
     yPos += constant::CELL_SIZE;
   }
 
   xPos = mOrigin.x;
   yPos = mOrigin.y;
   for (int idy{ 0 }; idy <= constant::N_COLS; ++idy) {
-    SDL_RenderDrawLine(renderer, xPos, yPos, xPos, yPos + constant::N_ROWS * constant::CELL_SIZE);
+    SDL_RenderDrawLine(renderer,
+                       xPos,
+                       yPos,
+                       xPos,
+                       yPos + constant::N_ROWS * constant::CELL_SIZE);
     xPos += constant::CELL_SIZE;
   }
 }
@@ -80,8 +91,11 @@ Grid::clear_completed_rows()
   bool found = false;
   int  row = constant::N_ROWS - 1;
 
-  while (std::any_of(m_cellGrid[row].begin(), m_cellGrid[row].end(), is_occupied) && row > 0) {
-    if (std::all_of(m_cellGrid[row].begin(), m_cellGrid[row].end(), is_occupied)) {
+  while (
+    std::any_of(m_cellGrid[row].begin(), m_cellGrid[row].end(), is_occupied) &&
+    row > 0) {
+    if (std::all_of(
+          m_cellGrid[row].begin(), m_cellGrid[row].end(), is_occupied)) {
       n_completed_rows += 1;
       if (!found) {
         found = true;
@@ -95,7 +109,8 @@ Grid::clear_completed_rows()
     for (int completed_row{ starting_row + 1 }; completed_row-- > 0;) {
       for (int col{ 0 }; col < constant::N_COLS; ++col) {
         if (completed_row >= n_completed_rows) {
-          m_cellGrid[completed_row][col] = m_cellGrid[completed_row - n_completed_rows][col];
+          m_cellGrid[completed_row][col] =
+            m_cellGrid[completed_row - n_completed_rows][col];
         } else {
           m_cellGrid[completed_row][col] = Cell{};
         }
@@ -113,6 +128,5 @@ Grid::get_cell(int idx_x, int idx_y) const
 void
 Grid::set_cell(int idx_x, int idx_y, bool occupation, Color color)
 {
-  m_cellGrid[idx_y][idx_x].occupied = occupation;
-  m_cellGrid[idx_y][idx_x].color = color;
+  m_cellGrid[idx_y][idx_x] = { occupation, color };
 }

@@ -1,25 +1,32 @@
 #include "counter.h"
 
 Counter::Counter(int n_frames)
-  : m_n_frames{ n_frames }
-  , m_counter{ 0 }
+  : n_frames_{ n_frames }
+  , counter_{ n_frames }
 {}
 
 bool
-Counter::isIdle() const
+Counter::isDone() const
 {
-  return m_counter == m_n_frames;
+  return counter_ == n_frames_;
 }
 
 void
-Counter::reset()
+Counter::Stop()
 {
-  m_counter = 0;
+  counter_ = n_frames_;
 }
 
 void
-Counter::update()
+Counter::Reset()
 {
-  if (not isIdle())
-    m_counter++;
+  counter_ = 0;
+}
+
+void
+Counter::Update()
+{
+  if (!isDone()) {
+    counter_++;
+  }
 }

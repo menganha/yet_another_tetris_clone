@@ -1,22 +1,22 @@
 #include "tetromino.h"
 
-Tetromino::Tetromino(ElementCoord_t coordList, const Color color)
-  : mGravity{ 2 }
-  , mHasLanded{ false }
-  , mColor{ color }
-  , mLocalCoord{ coordList }
+Tetromino::Tetromino(ElementCoord coordList, const Color color)
+  : color_{ color }
+  , localCoord_{ coordList }
 {
   reset_position();
 }
 
-Tetromino::~Tetromino() {}
-
 void
 Tetromino::render(SDL_Renderer* renderer)
 {
-  SDL_SetRenderDrawColor(renderer, mColor.red, mColor.green, mColor.blue, mColor.alpha);
+  SDL_SetRenderDrawColor(
+    renderer, color_.red, color_.green, color_.blue, color_.alpha);
   for (int idx = 0; idx < mSize; idx++) {
-    SDL_Rect rect{ mAbsCoord[idx].x, mAbsCoord[idx].y, constant::CELL_SIZE, constant::CELL_SIZE };
+    SDL_Rect rect{ abs_coord_[idx].x,
+                   abs_coord_[idx].y,
+                   constant::CELL_SIZE,
+                   constant::CELL_SIZE };
     SDL_RenderFillRect(renderer, &rect);
   }
 }
@@ -24,156 +24,119 @@ Tetromino::render(SDL_Renderer* renderer)
 void
 Tetromino::reset_position()
 {
-  mFrameCoord = { 4 * constant::CELL_SIZE + constant::GRID_X0,
-                  -2 * constant::CELL_SIZE + constant::GRID_Y0 };
-  mAbsCoord = get_abs_coordinates(mFrameCoord, mLocalCoord);
-  mHasLanded = false;
+  frameCoord_ = { 4 * constant::CELL_SIZE + constant::GRID_X0,
+                  constant::GRID_Y0 };
+  update_abs_coord();
 }
 
-Tetromino::ElementCoord_t
-Tetromino::get_abs_coordinates(const SDL_Point frameCoord, const ElementCoord_t localCoord) const
+void
+Tetromino::rotate()
 {
-  ElementCoord_t absCoord;
   for (int idx = 0; idx < mSize; idx++) {
-    absCoord[idx] = { localCoord[idx].x * constant::CELL_SIZE + frameCoord.x,
-                      localCoord[idx].y * constant::CELL_SIZE + frameCoord.y };
+    int tmp_x;
+    int tmp_y;
+    tmp_x = -localCoord_[idx].y + 2; // (x-x0) cos t - (y-y0) sin t
+    tmp_y = localCoord_[idx].x;      // (x-x0) sin t + (y-y0) cos t
+    localCoord_[idx] = { tmp_x, tmp_y };
   }
-  return absCoord;
+  update_abs_coord();
 }
 
 void
-Tetromino::update(const Controller& controller, Grid& grid)
+Tetromino::move(int delta_x, int delta_y)
 {
-  if (controller.noAction()) {
-    fall(grid);
-  } else if (controller.mACTION) {
-    rotate(grid);
-  } else {
-    move(controller, grid);
-  }
-}
-
-void
-Tetromino::fall(Grid& grid)
-{
-  SDL_Point      tmp_frameCoord{ mFrameCoord };
-  ElementCoord_t tmp_localCoord{ mLocalCoord };
-
-  tmp_frameCoord.y = mFrameCoord.y + mGravity;
-  ElementCoord_t tmp_absCoord = get_abs_coordinates(tmp_frameCoord, tmp_localCoord);
-
-  if (overlaps_blocks(tmp_absCoord, grid, true)) {
-    mHasLanded = true;
-    for (SDL_Point indices : get_containing_cell_indices(tmp_absCoord)) {
-      grid.set_cell(indices.x, indices.y, true, mColor);
-    }
-  } else {
-    mFrameCoord = tmp_frameCoord;
-    mLocalCoord = tmp_localCoord;
-    mAbsCoord = tmp_absCoord;
-  }
-}
-
-void
-Tetromino::rotate(const Grid& grid)
-{
-  ElementCoord_t tmp_localCoord{ mLocalCoord };
-  for (int idx = 0; idx < mSize; idx++) {
-    tmp_localCoord[idx].x = -mLocalCoord[idx].y + 2; // (x-x0) cos t - (y-y0) sin t
-    tmp_localCoord[idx].y = mLocalCoord[idx].x;      // (x-x0) sin t + (y-y0) cos t
-  }
-
-  ElementCoord_t tmp_absCoord = get_abs_coordinates(mFrameCoord, tmp_localCoord);
-
-  if (!has_collided(tmp_absCoord, grid)) {
-    mLocalCoord = tmp_localCoord;
-    mAbsCoord = tmp_absCoord;
-  }
-}
-
-void
-Tetromino::move(const Controller& controller, const Grid& grid)
-{
-
-  SDL_Point tmp_frameCoord{ mFrameCoord };
-  if (controller.mRIGHT) {
-    tmp_frameCoord.x += constant::CELL_SIZE;
-  } else if (controller.mLEFT) {
-    tmp_frameCoord.x -= constant::CELL_SIZE;
-  } else if (controller.mDOWN) {
-    tmp_frameCoord.y += constant::CELL_SIZE;
-  }
-
-  ElementCoord_t tmp_absCoord = get_abs_coordinates(tmp_frameCoord, mLocalCoord);
-
-  if (!has_collided(tmp_absCoord, grid)) {
-    mFrameCoord = tmp_frameCoord;
-    mAbsCoord = tmp_absCoord;
-  }
+  frameCoord_ = { frameCoord_.x + delta_x, frameCoord_.y + delta_y };
+  update_abs_coord();
 }
 
 bool
-Tetromino::has_collided(const ElementCoord_t absCoord, const Grid& grid) const
+Tetromino::collides(const Grid& grid) const
 {
+  // Checks for the collission with the grid borders
   auto out_of_bounds = [](SDL_Point coord) {
-    return (coord.x < constant::GRID_X0) || (coord.x > constant::GRID_X1 - constant::CELL_SIZE);
+    return (coord.x < constant::GRID_X0) ||
+           (coord.x > constant::GRID_X1 - constant::CELL_SIZE) ||
+           (coord.y > constant::GRID_Y1 - constant::CELL_SIZE);
   };
 
-  if (std::any_of(absCoord.begin(), absCoord.end(), out_of_bounds)) {
+  if (std::any_of(abs_coord_.begin(), abs_coord_.end(), out_of_bounds)) {
     return true;
   }
 
-  return overlaps_blocks(absCoord, grid);
+  // Checks for collisions with blocks locked on the grid
+  return lands(grid);
 }
 
 bool
-Tetromino::overlaps_blocks(const ElementCoord_t absCoord, const Grid& grid, bool below) const
+Tetromino::lands(const Grid& grid) const
 {
-  // The variable "below" indicates whether to check overlapping with the above or below blocks when
-  // the tetromino is between adjacent vertical cells
-  bool overlaps = false;
-  for (SDL_Point indices : get_containing_cell_indices(absCoord)) {
+  for (SDL_Point indices : get_containing_cell_indices()) {
     if (indices.y < 0) {
       break;
     }
-    if (grid.get_cell(indices.x, indices.y + below).occupied) {
-      overlaps = true;
+    if (grid.get_cell(indices.x, indices.y).occupied) {
+      return true;
     }
   }
-  return overlaps;
+  return false;
 }
 
-Tetromino::ElementCoord_t
-Tetromino::get_coord() const
+Tetromino::ElementCoord
+Tetromino::get_containing_cell_indices() const
 {
-  return mAbsCoord;
-}
+  // Gets the closest cell indices of the grid that contain the tetromino. If
+  // tetromino is between two vertical cells it only retruns the one up
+  ElementCoord cell_indices;
 
-Tetromino::ElementCoord_t
-Tetromino::get_containing_cell_indices(const ElementCoord_t absCoord) const
-{
-  // Gets the closest cell indices of the grid that contain the tetromino. If tetromino is between
-  // two vertical cells it only retruns the one up
-  ElementCoord_t cell_indices;
-
-  for (std::size_t idx{ 0 }; idx < mSize; ++idx) {
-    /* if (absCoord[idx].y < constant::GRID_Y0) { */
-    /*   continue; */
-    /* } */
-    cell_indices[idx] = { (absCoord[idx].x - constant::GRID_X0) / constant::CELL_SIZE,
-                          (absCoord[idx].y - constant::GRID_Y0) / constant::CELL_SIZE };
+  for (int idx = 0; idx < mSize; ++idx) {
+    cell_indices[idx] = {
+      (abs_coord_[idx].x - constant::GRID_X0) / constant::CELL_SIZE,
+      (abs_coord_[idx].y - constant::GRID_Y0) / constant::CELL_SIZE
+    };
   }
   return cell_indices;
 }
 
-bool
-Tetromino::has_landed() const
+Tetromino::ElementCoord
+Tetromino::get_coord() const
 {
-  return mHasLanded;
+  return abs_coord_;
+}
+
+void
+Tetromino::set_coord(Tetromino::ElementCoord absCoordinates, bool relative)
+{
+  // Depending on the tipe of transformation it will update only the relative or
+  // only the coordinates of the frame of reference
+  abs_coord_ = absCoordinates;
+  if (relative) {
+    for (int idx = 0; idx < mSize; idx++) {
+      localCoord_[idx].x =
+        (abs_coord_[idx].x - frameCoord_.x) / constant::CELL_SIZE;
+      localCoord_[idx].y =
+        (abs_coord_[idx].y - frameCoord_.y) / constant::CELL_SIZE;
+    }
+  } else {
+    frameCoord_.x = abs_coord_[0].x - localCoord_[0].x * constant::CELL_SIZE;
+    frameCoord_.y = abs_coord_[0].y - localCoord_[0].y * constant::CELL_SIZE;
+  }
 }
 
 Color
 Tetromino::get_color() const
 {
-  return mColor;
+  return color_;
+}
+
+void
+Tetromino::update_abs_coord()
+{
+  // Updates the absolute coordinates if either the frame or the relative
+  // coordinates change
+  for (int idx = 0; idx < mSize; idx++) {
+    abs_coord_[idx] = {
+      localCoord_[idx].x * constant::CELL_SIZE + frameCoord_.x,
+      localCoord_[idx].y * constant::CELL_SIZE + frameCoord_.y
+    };
+  }
 }

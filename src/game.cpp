@@ -1,10 +1,13 @@
 #include "game.h"
 
 Game::Game()
+  : input_{ 3, 10, 5}
 {
   if (!Game::init()) {
-    mIsRunning = true;
-    mTetromino = mTetrominoManager.get_next_tetromino();
+    is_running_ = true;
+    tetromino_landed_ = false;
+    pTetromino_ = mTetrominoManager.get_next_tetromino();
+    fall_delay_.Reset();
   }
 }
 
@@ -22,7 +25,8 @@ int
 Game::init()
 {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-    std::cout << "SDL could not initialize! SDL Error " << SDL_GetError() << std::endl;
+    std::cout << "SDL could not initialize! SDL Error " << SDL_GetError()
+              << std::endl;
     return -1;
   }
 
@@ -37,13 +41,16 @@ Game::init()
                              constant::SCREEN_HEIGHT,
                              SDL_WINDOW_SHOWN);
   if (mWindow == nullptr) {
-    std::cout << "Window could not be created! SDL Error: " << SDL_GetError() << std::endl;
+    std::cout << "Window could not be created! SDL Error: " << SDL_GetError()
+              << std::endl;
     return -1;
   }
 
-  mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+  mRenderer = SDL_CreateRenderer(
+    mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
   if (mRenderer == nullptr) {
-    std::cout << "Renderer could not be created SDL Error: " << SDL_GetError() << std::endl;
+    std::cout << "Renderer could not be created SDL Error: " << SDL_GetError()
+              << std::endl;
     return -1;
   }
 
@@ -53,7 +60,7 @@ Game::init()
 void
 Game::gameLoop()
 {
-  while (mIsRunning) {
+  while (is_running_) {
     update();
     render();
     draw();
@@ -63,28 +70,72 @@ Game::gameLoop()
 void
 Game::update()
 {
-  SDL_SetRenderDrawColor(
-    mRenderer, colors::BLACK.red, colors::BLACK.green, colors::BLACK.blue, colors::BLACK.alpha);
-  SDL_RenderClear(mRenderer);
-  mController.update();
-  mGrid.update();
-  mTetromino->update(mController, mGrid);
+  input_.Update();
+  grid_.update();
+  fall_delay_.Update();
 
-  if (mTetromino->has_landed()) {
-    mTetromino = mTetrominoManager.get_next_tetromino();
-    mTetromino->reset_position();
+  // Let tetromino fall if the frame delay is completed
+  Tetromino::ElementCoord tmp_coord = pTetromino_->get_coord();
+  if ((fall_delay_.isDone() || input_.Down()) && not tetromino_landed_) {
+    pTetromino_->move(0, constant::CELL_SIZE);
+    if (pTetromino_->lands(grid_)) {
+      pTetromino_->set_coord(tmp_coord);
+      tetromino_landed_ = true;
+      lock_delay_.Reset();
+    } else {
+      fall_delay_.Reset();
+    }
   }
 
-  if (mController.mQuit) {
-    mIsRunning = false;
+  // Wait lock_delay to lock the pieces onto the grid
+  if (tetromino_landed_) {
+    lock_delay_.Update();
+    if (lock_delay_.isDone()) {
+      for (SDL_Point indices : pTetromino_->get_containing_cell_indices()) {
+        grid_.set_cell(indices.x, indices.y, true, pTetromino_->get_color());
+      }
+      pTetromino_ = mTetrominoManager.get_next_tetromino();
+      pTetromino_->reset_position();
+      fall_delay_.Reset();
+      tetromino_landed_ = false;
+    }
+  }
+
+  // Move tetromino according to the input. Reset position if it collides
+  tmp_coord = pTetromino_->get_coord();
+  int relative = false;
+  if (input_.Left()) {
+    pTetromino_->move(-constant::CELL_SIZE, 0);
+  }
+  if (input_.Right()) {
+    pTetromino_->move(constant::CELL_SIZE, 0);
+  }
+  if (input_.Action()) {
+    pTetromino_->rotate();
+    // BUG: Funny rotation once one rotation move was denied
+    relative = true;
+  }
+
+  if (pTetromino_->collides(grid_)) {
+    pTetromino_->set_coord(tmp_coord, relative);
+  }
+
+  if (input_.Quit()) {
+    is_running_ = false;
   }
 }
 
 void
 Game::render()
 {
-  mGrid.render(mRenderer);
-  mTetromino->render(mRenderer);
+  SDL_SetRenderDrawColor(mRenderer,
+                         colors::BLACK.red,
+                         colors::BLACK.green,
+                         colors::BLACK.blue,
+                         colors::BLACK.alpha);
+  SDL_RenderClear(mRenderer);
+  grid_.render(mRenderer);
+  pTetromino_->render(mRenderer);
 }
 
 void

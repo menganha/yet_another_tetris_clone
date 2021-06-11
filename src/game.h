@@ -3,8 +3,9 @@
 
 #include "color.h"
 #include "constant.h"
-#include "controller.h"
+#include "counter.h"
 #include "grid.h"
+#include "input.h"
 #include "tetromino.h"
 #include "tetromino_manager.h"
 #include <SDL2/SDL.h>
@@ -21,19 +22,23 @@ public:
   void gameLoop();
 
 private:
-  bool             mIsRunning;
+  bool             is_running_;
+  bool             tetromino_landed_;
   SDL_Event        mEvent;
-  Controller       mController;
+  Input            input_;
   SDL_Window*      mWindow;
   SDL_Renderer*    mRenderer;
-  Tetromino*       mTetromino;
+  Tetromino*       pTetromino_;
   TetrominoManager mTetrominoManager;
-  Grid             mGrid;
+  Grid             grid_;
+  Counter          fall_delay_{ 50 }; // Amount of frames to wait till the
+                                      // tetromino falls by one unit
+  Counter lock_delay_{ 10 }; // Frame until the landed piece locks in position
 
-  int              init();
-  void             update();
-  void             render();
-  void             draw();
+  int     init();
+  void    update();
+  void    render();
+  void    draw();
 };
 
 #endif
