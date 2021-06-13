@@ -10,6 +10,9 @@
 
 // Tetrominos are defined with respect to a local frame of reference where the
 // point 3,3 is the rotation center
+// TODO: Big change: include the static tetromino-shape data since there will be no other type of tetromino. plus we need
+// to keep the original orientation for when we reset the tetromino
+// The constructor should now accepts just the type. Color and shape is handled within the class
 class Tetromino
 {
 public:

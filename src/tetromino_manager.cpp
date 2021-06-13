@@ -2,6 +2,7 @@
 
 TetrominoManager::TetrominoManager()
   : mMersenne(static_cast<std::mt19937::result_type>(std::time(nullptr)))
+  , cache_{ nullptr }
   , T_block({ { { 1, 0 }, { 0, 1 }, { 1, 1 }, { 2, 1 } } }, colors::LILA)
   , L_block({ { { 2, 0 }, { 0, 1 }, { 1, 1 }, { 2, 1 } } }, colors::WHITE)
   , J_block({ { { 0, 0 }, { 0, 1 }, { 1, 1 }, { 2, 1 } } }, colors::BLUE)
@@ -9,14 +10,24 @@ TetrominoManager::TetrominoManager()
   , S_block({ { { 1, 0 }, { 2, 0 }, { 0, 1 }, { 1, 1 } } }, colors::GREEN)
   , O_block({ { { 1, 0 }, { 2, 0 }, { 1, 1 }, { 2, 1 } } }, colors::YELLOW)
   , I_block({ { { 0, 1 }, { 1, 1 }, { 2, 1 }, { 3, 1 } } }, colors::CYAN)
-{}
+{
+  cache_ = RandomSelection();
+}
 
 TetrominoManager::~TetrominoManager() {}
 
 Tetromino*
-TetrominoManager::get_next_tetromino()
+TetrominoManager::GetNextTetromino()
 {
-  // Improve the choosing of the tetromino. Not all conditions have been applied
+  Tetromino* current = cache_;
+  cache_ = RandomSelection();
+  return current;
+}
+
+Tetromino*
+TetrominoManager::RandomSelection()
+{
+  // TODO: Use the seven bag approach of the official tetris game to make it less random
   int choice = mDist(mMersenne);
   if (choice == 1) {
     return &Z_block;

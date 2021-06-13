@@ -5,33 +5,36 @@
 #include "constant.h"
 #include <SDL2/SDL.h>
 #include <algorithm>
+#include <stdexcept>
 #include <array>
 
 class Grid
 {
+
 public:
+  Grid();
+  ~Grid();
+
   struct Cell
   {
     bool  occupied{ false };
-    Color color{ colors::WHITE };
+    Color color{ colors::BLACK };
   };
-  using CellGrid = std::array<std::array<Cell, constant::N_COLS>, constant::N_ROWS + 1>;
-
-  Grid();
-  ~Grid();
   void render(SDL_Renderer* renderer);
   void update();
   void set_cell(int idx_x, int idx_y, bool occupation, Color color);
   Cell get_cell(int idx_x, int idx_y) const;
 
 private:
-  CellGrid        m_cellGrid;
-  const SDL_Point mOrigin;
-  SDL_Rect        coord_to_rect(int idx_x, int idx_y);
+  using CellRow = std::array<Cell, constant::N_COLS>;
 
-  void            clear_completed_rows();
-  void            render_lines(SDL_Renderer* renderer);
-  void            render_blocks(SDL_Renderer* renderer);
+  std::array<CellRow, constant::N_ROWS> cell_grid_;
+  SDL_Point const                       origin_;
+  SDL_Rect                              coord_to_rect(int idx_x, int idx_y);
+
+  int  clear_completed_rows(); // Also returns number of completed rows
+  void render_lines(SDL_Renderer* renderer);
+  void render_blocks(SDL_Renderer* renderer);
 };
 
-#endif /* ifndef GRID_H */
+#endif

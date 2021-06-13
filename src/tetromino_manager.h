@@ -12,18 +12,23 @@ public:
   TetrominoManager();
   ~TetrominoManager();
 
-  Tetromino* get_next_tetromino();
+  Tetromino* GetNextTetromino();
+  // TODO: Function to call a special rendering function of the tetromino that draws it at
+  // the square where it shows the next piece
+  void       RenderCachedTetromino();
 
 private:
-  std::mt19937 mMersenne;
+  std::mt19937                    mMersenne;
   std::uniform_int_distribution<> mDist{ 1, 7 };
-  Tetromino T_block;
-  Tetromino L_block;
-  Tetromino J_block;
-  Tetromino Z_block;
-  Tetromino S_block;
-  Tetromino O_block;
-  Tetromino I_block;
+  Tetromino*                      cache_;
+  Tetromino                       T_block;
+  Tetromino                       L_block;
+  Tetromino                       J_block;
+  Tetromino                       Z_block;
+  Tetromino                       S_block;
+  Tetromino                       O_block;
+  Tetromino                       I_block;
+  Tetromino*                      RandomSelection();
 };
 
 #endif

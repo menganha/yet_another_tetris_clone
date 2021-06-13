@@ -23,7 +23,7 @@ public:
 
 private:
   bool             is_running_;
-  bool             tetromino_landed_;
+  bool             in_landing_position;
   SDL_Event        mEvent;
   Input            input_;
   SDL_Window*      mWindow;
@@ -31,14 +31,15 @@ private:
   Tetromino*       pTetromino_;
   TetrominoManager mTetrominoManager;
   Grid             grid_;
-  Counter          fall_delay_{ 50 }; // Amount of frames to wait till the
-                                      // tetromino falls by one unit
-  Counter lock_delay_{ 10 }; // Frame until the landed piece locks in position
+  // Frame until the landed piece locks in position
+  Counter          lock_delay_;
+  // Amount of frames to wait till the tetromino falls by one unit
+  Counter          fall_delay_;
 
-  int     init();
-  void    update();
-  void    render();
-  void    draw();
+  int              init();
+  void             update();
+  void             render();
+  void             draw();
 };
 
 #endif
