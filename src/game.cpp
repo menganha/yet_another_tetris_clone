@@ -39,8 +39,8 @@ Game::init()
   mWindow = SDL_CreateWindow("Yet Another Tetris Clone",
                              SDL_WINDOWPOS_UNDEFINED,
                              SDL_WINDOWPOS_UNDEFINED,
-                             constant::SCREEN_WIDTH,
-                             constant::SCREEN_HEIGHT,
+                             constant::kScreenWidth,
+                             constant::kScreenSize,
                              SDL_WINDOW_SHOWN);
   if (mWindow == nullptr) {
     std::cout << "Window could not be created! SDL Error: " << SDL_GetError() << std::endl;
@@ -72,12 +72,12 @@ void
 Game::update()
 {
   input_.Update();
-  grid_.update();
+  grid_.Update();
   fall_delay_.Update();
 
   // Check if is in a position for landing
-  Tetromino::ElementCoord tmp_coord = pTetromino_->get_coord();
-  in_landing_position = pTetromino_->lands(grid_);
+  pTetromino_->CacheCoordinates();
+  in_landing_position = pTetromino_->Lands(grid_);
 
   if (in_landing_position) {
     lock_delay_.Update();
@@ -87,39 +87,40 @@ Game::update()
 
   // Let tetromino fall if the frame delay is completed
   if ((fall_delay_.isDone() || input_.Down()) && not in_landing_position) {
-    pTetromino_->move(0, constant::CELL_SIZE);
+    pTetromino_->Move(0, constant::kCellSize);
     fall_delay_.Reset();
   }
 
   // Wait lock_delay to lock the pieces onto the grid
   if (lock_delay_.isDone()) {
     for (SDL_Point indices : pTetromino_->get_containing_cell_indices()) {
-      grid_.set_cell(indices.x, indices.y, true, pTetromino_->get_color());
+      grid_.set_cell(indices.x, indices.y, true, pTetromino_->GetColor());
     }
     pTetromino_ = mTetrominoManager.GetNextTetromino();
-    pTetromino_->reset_position();
+    pTetromino_->ResetPosition();
     fall_delay_.Reset();
   }
 
   // Move tetromino according to the input. Reset position if it collides
-  tmp_coord = pTetromino_->get_coord();
-  int relative = false;
   if (input_.Left()) {
-    pTetromino_->move(-constant::CELL_SIZE, 0);
+    pTetromino_->Move(-constant::kCellSize, 0);
   }
   if (input_.Right()) {
-    pTetromino_->move(constant::CELL_SIZE, 0);
+    pTetromino_->Move(constant::kCellSize, 0);
   }
-  if (input_.Action()) {
-    // BUG: Funnyu thing whith the Z, S and T pieces. When not being able to rotate, following rotations are
-    // bigger
-    pTetromino_->rotate();
-    relative = true;
+  if (pTetromino_->Collides(grid_)) {
+    pTetromino_->RestoreFromCache();
   }
 
-  if (pTetromino_->collides(grid_)) {
-    pTetromino_->set_coord(tmp_coord, relative);
+
+  pTetromino_->CacheCoordinates();
+  if (input_.Action()) {
+    pTetromino_->Rotate();
   }
+  if (pTetromino_->Collides(grid_)) {
+    pTetromino_->RestoreFromCache();
+  }
+
   if (input_.Quit()) {
     is_running_ = false;
   }
@@ -130,8 +131,8 @@ Game::render()
 {
   SDL_SetRenderDrawColor(mRenderer, colors::BLACK.red, colors::BLACK.green, colors::BLACK.blue, colors::BLACK.alpha);
   SDL_RenderClear(mRenderer);
-  grid_.render(mRenderer);
-  pTetromino_->render(mRenderer);
+  grid_.Render(mRenderer);
+  pTetromino_->Render(mRenderer);
   // TODO: ADD here the render of the cached piece
 }
 

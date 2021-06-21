@@ -3,13 +3,13 @@
 TetrominoManager::TetrominoManager()
   : mMersenne(static_cast<std::mt19937::result_type>(std::time(nullptr)))
   , cache_{ nullptr }
-  , T_block({ { { 1, 0 }, { 0, 1 }, { 1, 1 }, { 2, 1 } } }, colors::LILA)
-  , L_block({ { { 2, 0 }, { 0, 1 }, { 1, 1 }, { 2, 1 } } }, colors::WHITE)
-  , J_block({ { { 0, 0 }, { 0, 1 }, { 1, 1 }, { 2, 1 } } }, colors::BLUE)
-  , Z_block({ { { 0, 0 }, { 1, 0 }, { 1, 1 }, { 2, 1 } } }, colors::RED)
-  , S_block({ { { 1, 0 }, { 2, 0 }, { 0, 1 }, { 1, 1 } } }, colors::GREEN)
-  , O_block({ { { 1, 0 }, { 2, 0 }, { 1, 1 }, { 2, 1 } } }, colors::YELLOW)
-  , I_block({ { { 0, 1 }, { 1, 1 }, { 2, 1 }, { 3, 1 } } }, colors::CYAN)
+  , T_block(tdata::TetrominoType::T_block, colors::LILA)
+  , L_block(tdata::TetrominoType::L_block, colors::WHITE)
+  , J_block(tdata::TetrominoType::J_block, colors::BLUE)
+  , Z_block(tdata::TetrominoType::Z_block, colors::RED)
+  , S_block(tdata::TetrominoType::S_block, colors::GREEN)
+  , O_block(tdata::TetrominoType::O_block, colors::YELLOW)
+  , I_block(tdata::TetrominoType::I_block, colors::CYAN)
 {
   cache_ = RandomSelection();
 }
