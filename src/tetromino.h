@@ -53,6 +53,7 @@ public:
   Tetromino(tdata::TetrominoType type, const Color color);
 
   void         Render(SDL_Renderer* renderer) const;
+  void         RenderIntitialStateAt(SDL_Renderer* renderer, int pos_x, int pos_y) const;
   void         ResetPosition();
   Color        GetColor() const;
   tdata::Coord get_containing_cell_indices() const;

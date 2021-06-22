@@ -2,6 +2,7 @@
 #define TETROMINO_MANAGER_H
 
 #include "tetromino.h"
+#include <SDL2/SDL.h>
 #include <ctime>
 #include <random>
 
@@ -15,7 +16,7 @@ public:
   Tetromino* GetNextTetromino();
   // TODO: Function to call a special rendering function of the tetromino that draws it at
   // the square where it shows the next piece
-  void       RenderCachedTetromino();
+  void       RenderCachedTetromino(SDL_Renderer* renderer) const;
 
 private:
   std::mt19937                    mMersenne;

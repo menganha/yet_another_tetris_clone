@@ -15,6 +15,7 @@ Tetromino::ResetPosition()
   frame_coord_ = initial_frame_coord_;
   rel_coord_ = initial_rel_coord_;
   UpdateAbsCoord();
+  CacheCoordinates();
 }
 
 void
@@ -23,6 +24,19 @@ Tetromino::Render(SDL_Renderer* renderer) const
   SDL_SetRenderDrawColor(renderer, color_.red, color_.green, color_.blue, color_.alpha);
   for (auto abs_coord : abs_coord_) {
     SDL_Rect rect{ abs_coord.x, abs_coord.y, constant::kCellSize, constant::kCellSize };
+    SDL_RenderFillRect(renderer, &rect);
+  }
+}
+
+void
+Tetromino::RenderIntitialStateAt(SDL_Renderer* renderer, int pos_x, int pos_y) const
+{
+  SDL_SetRenderDrawColor(renderer, color_.red, color_.green, color_.blue, color_.alpha);
+  for (auto rel_coord : initial_rel_coord_) {
+    SDL_Rect rect{ pos_x + rel_coord.x * constant::kCellSize,
+                   pos_y + rel_coord.y * constant::kCellSize,
+                   constant::kCellSize,
+                   constant::kCellSize };
     SDL_RenderFillRect(renderer, &rect);
   }
 }
@@ -94,7 +108,6 @@ Tetromino::get_containing_cell_indices() const
   }
   return cell_indices;
 }
-
 
 Color
 Tetromino::GetColor() const

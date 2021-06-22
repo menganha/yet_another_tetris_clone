@@ -24,6 +24,12 @@ TetrominoManager::GetNextTetromino()
   return current;
 }
 
+void
+TetrominoManager::RenderCachedTetromino(SDL_Renderer* renderer) const
+{
+  cache_->RenderIntitialStateAt(renderer, constant::kGridX1 + 20, constant::kGridY0 + 50);
+}
+
 Tetromino*
 TetrominoManager::RandomSelection()
 {
