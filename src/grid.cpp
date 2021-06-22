@@ -39,41 +39,33 @@ void
 Grid::render_lines(SDL_Renderer* renderer) const
 {
   SDL_SetRenderDrawColor(renderer, colors::WHITE.red, colors::WHITE.green, colors::WHITE.blue, 0x20);
-
   // Render inner horizontal lines
-  int xPos = origin_.x;
-  int yPos = origin_.y;
-  for (int idy{ 0 }; idy < constant::kNRows; ++idy) {
-    SDL_RenderDrawLine(renderer, xPos, yPos - 1, xPos + constant::kNCols * constant::kCellSize, yPos - 1);
-    SDL_RenderDrawLine(renderer, xPos, yPos, xPos + constant::kNCols * constant::kCellSize, yPos);
+  for (int idx{ 1 }; idx < constant::kNRows; ++idx) {
+    int xPos = origin_.x;
+    int yPos = origin_.y + constant::kCellSize * idx;
+    SDL_RenderDrawLine(renderer, xPos, yPos - 1, xPos + constant::kNCols * constant::kCellSize - 1, yPos - 1);
+    SDL_RenderDrawLine(renderer, xPos, yPos, xPos + constant::kNCols * constant::kCellSize - 1, yPos);
     yPos = yPos + constant::kCellSize;
   }
 
   // Render inner vertical lines
-  xPos = origin_.x;
-  yPos = origin_.y;
-  for (int idy{ 0 }; idy < constant::kNCols; ++idy) {
-    SDL_RenderDrawLine(renderer, xPos - 1, yPos, xPos - 1, yPos + constant::kNRows * constant::kCellSize);
-    SDL_RenderDrawLine(renderer, xPos, yPos, xPos, yPos + constant::kNRows * constant::kCellSize);
+  for (int idx{ 1 }; idx < constant::kNCols; ++idx) {
+    int xPos = origin_.x + constant::kCellSize * idx;
+    int yPos = origin_.y;
+    SDL_RenderDrawLine(renderer, xPos - 1, yPos, xPos - 1, yPos + constant::kNRows * constant::kCellSize - 1);
+    SDL_RenderDrawLine(renderer, xPos, yPos, xPos, yPos + constant::kNRows * constant::kCellSize - 1);
     xPos = xPos + constant::kCellSize;
   }
 
-  // Render outter lines
   SDL_SetRenderDrawColor(renderer, colors::WHITE.red, colors::WHITE.green, colors::WHITE.blue, colors::WHITE.alpha);
-  xPos = origin_.x;
-  yPos = origin_.y;
-  SDL_RenderDrawLine(renderer, xPos - 1, yPos - 1, xPos + constant::kNCols * constant::kCellSize, yPos - 1);
-  SDL_RenderDrawLine(renderer, xPos - 1, yPos, xPos + constant::kNCols * constant::kCellSize, yPos);
-  SDL_RenderDrawLine(renderer, xPos - 1, yPos, xPos - 1, yPos + constant::kNRows * constant::kCellSize);
-  SDL_RenderDrawLine(renderer, xPos, yPos, xPos, yPos + constant::kNRows * constant::kCellSize);
-  xPos = origin_.x + constant::kNCols * constant::kCellSize;
-  yPos = origin_.y;
-  SDL_RenderDrawLine(renderer, xPos - 1, yPos, xPos - 1, yPos + constant::kNRows * constant::kCellSize);
-  SDL_RenderDrawLine(renderer, xPos, yPos, xPos, yPos + constant::kNRows * constant::kCellSize);
-  xPos = origin_.x;
-  yPos = origin_.y + constant::kNRows * constant::kCellSize;
-  SDL_RenderDrawLine(renderer, xPos, yPos - 1, xPos + constant::kNCols * constant::kCellSize, yPos - 1);
-  SDL_RenderDrawLine(renderer, xPos, yPos, xPos + constant::kNCols * constant::kCellSize, yPos);
+  // Render outer lines
+  for (int idx{ 1 }; idx < 4; ++idx) {
+    SDL_Rect rect = { origin_.x - idx,
+                      origin_.y - idx,
+                      constant::kNCols * constant::kCellSize + 2 * idx,
+                      constant::kNRows * constant::kCellSize + 2 * idx };
+    SDL_RenderDrawRect(renderer, &rect);
+  }
 }
 
 SDL_Rect
