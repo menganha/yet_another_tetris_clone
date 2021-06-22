@@ -27,6 +27,6 @@ void
 Counter::Update()
 {
   if (!isDone()) {
-    counter_++;
+    ++counter_;
   }
 }
