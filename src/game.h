@@ -9,7 +9,6 @@
 #include "tetromino.h"
 #include "tetromino_manager.h"
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include <array>
 #include <iostream>
 
@@ -31,10 +30,8 @@ private:
   Tetromino*       pTetromino_;
   TetrominoManager mTetrominoManager;
   Grid             grid_;
-  // Frame until the landed piece locks in position
-  Counter          lock_delay_;
-  // Amount of frames to wait till the tetromino falls by one unit
-  Counter          fall_delay_;
+  Counter          lock_delay_; // Frame until the landed piece locks in position
+  Counter          fall_delay_; // Amount of frames to wait till the tetromino falls by one unit
 
   int              init();
   void             update();

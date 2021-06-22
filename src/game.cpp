@@ -20,7 +20,6 @@ Game::~Game()
   SDL_DestroyWindow(mWindow);
   mWindow = nullptr;
   mRenderer = nullptr;
-  IMG_Quit();
   SDL_Quit();
 }
 
@@ -75,6 +74,10 @@ Game::update()
   grid_.Update();
   fall_delay_.Update();
 
+  if (input_.Quit()) {
+    is_running_ = false;
+  }
+
   // Check if is in a position for landing
   pTetromino_->CacheCoordinates();
   in_landing_position = pTetromino_->Lands(grid_);
@@ -90,6 +93,22 @@ Game::update()
     pTetromino_->Move(0, constant::kCellSize);
     fall_delay_.Reset();
   }
+  if (input_.Left()) {
+    pTetromino_->Move(-constant::kCellSize, 0);
+  }
+  if (input_.Right()) {
+    pTetromino_->Move(constant::kCellSize, 0);
+  }
+  if (pTetromino_->Collides(grid_)) {
+    pTetromino_->RestoreFromCache();
+  }
+  if (input_.Action()) {
+    pTetromino_->CacheCoordinates();
+    pTetromino_->Rotate();
+    if (pTetromino_->Collides(grid_)) {
+      pTetromino_->RestoreFromCache();
+    }
+  }
 
   // Wait lock_delay to lock the pieces onto the grid
   if (lock_delay_.isDone()) {
@@ -100,30 +119,6 @@ Game::update()
     pTetromino_->ResetPosition();
     fall_delay_.Reset();
   }
-
-  // Move tetromino according to the input. Reset position if it collides
-  if (input_.Left()) {
-    pTetromino_->Move(-constant::kCellSize, 0);
-  }
-  if (input_.Right()) {
-    pTetromino_->Move(constant::kCellSize, 0);
-  }
-  if (pTetromino_->Collides(grid_)) {
-    pTetromino_->RestoreFromCache();
-  }
-
-
-  pTetromino_->CacheCoordinates();
-  if (input_.Action()) {
-    pTetromino_->Rotate();
-  }
-  if (pTetromino_->Collides(grid_)) {
-    pTetromino_->RestoreFromCache();
-  }
-
-  if (input_.Quit()) {
-    is_running_ = false;
-  }
 }
 
 void
@@ -133,7 +128,7 @@ Game::render()
   SDL_RenderClear(mRenderer);
   grid_.Render(mRenderer);
   pTetromino_->Render(mRenderer);
-  // TODO: ADD here the render of the cached piece
+  mTetrominoManager.RenderCachedTetromino(mRenderer);
 }
 
 void
