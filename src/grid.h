@@ -32,9 +32,9 @@ private:
   SDL_Point const origin_;
   SDL_Rect        coord_to_rect(int idx_x, int idx_y) const;
 
-  int             clear_completed_rows(); // Also returns number of completed rows
-  void            render_lines(SDL_Renderer* renderer) const;
-  void            render_blocks(SDL_Renderer* renderer) const;
+  int             ClearCompletedRows(); // Also returns number of completed rows
+  void            RenderLines(SDL_Renderer* renderer) const;
+  void            RenderBlocks(SDL_Renderer* renderer) const;
 };
 
 #endif

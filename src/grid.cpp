@@ -7,18 +7,18 @@ Grid::Grid()
 void
 Grid::Update()
 {
-  Grid::clear_completed_rows();
+  Grid::ClearCompletedRows();
 }
 
 void
 Grid::Render(SDL_Renderer* renderer) const
 {
-  Grid::render_lines(renderer);
-  Grid::render_blocks(renderer);
+  Grid::RenderLines(renderer);
+  Grid::RenderBlocks(renderer);
 }
 
 void
-Grid::render_blocks(SDL_Renderer* renderer) const
+Grid::RenderBlocks(SDL_Renderer* renderer) const
 {
   for (int idy{ 0 }; idy < constant::kNRows; ++idy) {
     for (int idx{ 0 }; idx < constant::kNCols; ++idx) {
@@ -36,7 +36,7 @@ Grid::render_blocks(SDL_Renderer* renderer) const
 }
 
 void
-Grid::render_lines(SDL_Renderer* renderer) const
+Grid::RenderLines(SDL_Renderer* renderer) const
 {
   SDL_SetRenderDrawColor(renderer, colors::WHITE.red, colors::WHITE.green, colors::WHITE.blue, 0x20);
   // Render inner horizontal lines
@@ -57,8 +57,8 @@ Grid::render_lines(SDL_Renderer* renderer) const
     xPos = xPos + constant::kCellSize;
   }
 
-  SDL_SetRenderDrawColor(renderer, colors::WHITE.red, colors::WHITE.green, colors::WHITE.blue, colors::WHITE.alpha);
   // Render outer lines
+  SDL_SetRenderDrawColor(renderer, colors::WHITE.red, colors::WHITE.green, colors::WHITE.blue, colors::WHITE.alpha);
   for (int idx{ 1 }; idx < 4; ++idx) {
     SDL_Rect rect = { origin_.x - idx,
                       origin_.y - idx,
@@ -79,7 +79,7 @@ Grid::coord_to_rect(int ind_x, int ind_y) const
 }
 
 int
-Grid::clear_completed_rows()
+Grid::ClearCompletedRows()
 {
   auto is_occupied = [](Cell cell) { return cell.occupied == true; };
   int  n_completed_rows = 0;
