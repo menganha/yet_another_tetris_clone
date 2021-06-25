@@ -1,6 +1,6 @@
 #include "tetromino.h"
 
-Tetromino::Tetromino(tdata::TetrominoType tetromino_type, const Color color)
+Tetromino::Tetromino(tdata::TetrominoType tetromino_type, const SDL_Color color)
   : color_{ color }
   , tetromino_type_{ tetromino_type }
   , initial_frame_coord_{ 4 * constant::kCellSize + constant::kGridX0, constant::kGridY0 }
@@ -21,7 +21,7 @@ Tetromino::ResetPosition()
 void
 Tetromino::Render(SDL_Renderer* renderer) const
 {
-  SDL_SetRenderDrawColor(renderer, color_.red, color_.green, color_.blue, color_.alpha);
+  SDL_SetRenderDrawColor(renderer, color_.r, color_.g, color_.b, color_.a);
   for (auto abs_coord : abs_coord_) {
     SDL_Rect rect{ abs_coord.x, abs_coord.y, constant::kCellSize, constant::kCellSize };
     SDL_RenderFillRect(renderer, &rect);
@@ -31,7 +31,7 @@ Tetromino::Render(SDL_Renderer* renderer) const
 void
 Tetromino::RenderIntitialStateAt(SDL_Renderer* renderer, int pos_x, int pos_y) const
 {
-  SDL_SetRenderDrawColor(renderer, color_.red, color_.green, color_.blue, color_.alpha);
+  SDL_SetRenderDrawColor(renderer, color_.r, color_.g, color_.b, color_.a);
   for (auto rel_coord : initial_rel_coord_) {
     SDL_Rect rect{ pos_x + rel_coord.x * constant::kCellSize,
                    pos_y + rel_coord.y * constant::kCellSize,
@@ -109,7 +109,7 @@ Tetromino::get_containing_cell_indices() const
   return cell_indices;
 }
 
-Color
+SDL_Color
 Tetromino::GetColor() const
 {
   return color_;

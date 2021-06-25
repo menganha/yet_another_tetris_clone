@@ -50,12 +50,12 @@ class Tetromino
 
 public:
   // TODO: Constructor should also include initial position and cell size
-  Tetromino(tdata::TetrominoType type, const Color color);
+  Tetromino(tdata::TetrominoType type, const SDL_Color color);
 
   void         Render(SDL_Renderer* renderer) const;
   void         RenderIntitialStateAt(SDL_Renderer* renderer, int pos_x, int pos_y) const;
   void         ResetPosition();
-  Color        GetColor() const;
+  SDL_Color    GetColor() const;
   tdata::Coord get_containing_cell_indices() const;
   void         Move(int delta_x, int delta_y);
   bool         Collides(const Grid& grid) const;
@@ -65,7 +65,7 @@ public:
   void         RestoreFromCache();
 
 private:
-  Color const                color_;
+  SDL_Color const            color_;
   tdata::TetrominoType const tetromino_type_;
   SDL_Point const            initial_frame_coord_;
   SDL_Point                  frame_coord_;

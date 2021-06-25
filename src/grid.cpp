@@ -24,10 +24,10 @@ Grid::RenderBlocks(SDL_Renderer* renderer) const
     for (int idx{ 0 }; idx < constant::kNCols; ++idx) {
       if (cell_grid_[idy][idx].occupied) {
         SDL_SetRenderDrawColor(renderer,
-                               cell_grid_[idy][idx].color.red,
-                               cell_grid_[idy][idx].color.green,
-                               cell_grid_[idy][idx].color.blue,
-                               cell_grid_[idy][idx].color.alpha);
+                               cell_grid_[idy][idx].color.r,
+                               cell_grid_[idy][idx].color.g,
+                               cell_grid_[idy][idx].color.b,
+                               cell_grid_[idy][idx].color.a);
         SDL_Rect tmp_Rect = Grid::coord_to_rect(idx, idy);
         SDL_RenderFillRect(renderer, &tmp_Rect);
       }
@@ -38,7 +38,7 @@ Grid::RenderBlocks(SDL_Renderer* renderer) const
 void
 Grid::RenderLines(SDL_Renderer* renderer) const
 {
-  SDL_SetRenderDrawColor(renderer, colors::WHITE.red, colors::WHITE.green, colors::WHITE.blue, 0x20);
+  SDL_SetRenderDrawColor(renderer, colors::WHITE.r, colors::WHITE.g, colors::WHITE.b, 0x20);
   // Render inner horizontal lines
   for (int idx{ 1 }; idx < constant::kNRows; ++idx) {
     int xPos = origin_.x;
@@ -58,7 +58,7 @@ Grid::RenderLines(SDL_Renderer* renderer) const
   }
 
   // Render outer lines
-  SDL_SetRenderDrawColor(renderer, colors::WHITE.red, colors::WHITE.green, colors::WHITE.blue, colors::WHITE.alpha);
+  SDL_SetRenderDrawColor(renderer, colors::WHITE.r, colors::WHITE.g, colors::WHITE.b, colors::WHITE.a);
   for (int idx{ 1 }; idx < 4; ++idx) {
     SDL_Rect rect = { origin_.x - idx,
                       origin_.y - idx,
@@ -108,7 +108,7 @@ Grid::get_cell(int idx_x, int idx_y) const
 }
 
 void
-Grid::set_cell(int idx_x, int idx_y, bool occupation, Color color)
+Grid::set_cell(int idx_x, int idx_y, bool occupation, SDL_Color color)
 {
   cell_grid_[idx_y][idx_x] = { occupation, color };
 }

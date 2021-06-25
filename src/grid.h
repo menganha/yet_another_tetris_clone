@@ -16,12 +16,12 @@ public:
 
   struct Cell
   {
-    bool  occupied{ false };
-    Color color{ colors::BLACK };
+    bool      occupied{ false };
+    SDL_Color color{ colors::BLACK };
   };
   void Render(SDL_Renderer* renderer) const;
   void Update();
-  void set_cell(int idx_x, int idx_y, bool occupation, Color color);
+  void set_cell(int idx_x, int idx_y, bool occupation, SDL_Color color);
   Cell get_cell(int idx_x, int idx_y) const;
 
 private:

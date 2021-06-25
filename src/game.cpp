@@ -124,7 +124,7 @@ Game::update()
 void
 Game::render()
 {
-  SDL_SetRenderDrawColor(mRenderer, colors::BLACK.red, colors::BLACK.green, colors::BLACK.blue, colors::BLACK.alpha);
+  SDL_SetRenderDrawColor(mRenderer, colors::BLACK.r, colors::BLACK.g, colors::BLACK.b, colors::BLACK.a);
   SDL_RenderClear(mRenderer);
   grid_.Render(mRenderer);
   pTetromino_->Render(mRenderer);
