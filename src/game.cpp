@@ -89,7 +89,7 @@ Game::update()
   }
 
   // Let tetromino fall if the frame delay is completed
-  if ((fall_delay_.isDone() || input_.Down()) && not in_landing_position) {
+  if ((fall_delay_.isDone() or input_.Down()) and not in_landing_position) {
     pTetromino_->Move(0, constant::kCellSize);
     fall_delay_.Reset();
   }
