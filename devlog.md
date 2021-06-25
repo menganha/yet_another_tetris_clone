@@ -2,13 +2,15 @@
 
 Todo List
 
-    - Introduce a cache with the next piece to be dispatched
-    - Introduce the Super Rotation System. This includes wall kicks and things
+    - [X] Introduce a cache with the next piece to be dispatched
+    - [ ] Introduce the Super Rotation System. This includes wall kicks and things
       such as T-spins.
-    - Introduce software key repeat.
-    - Introduce shadow and hardrops.
-    - Introduce score keeping.
-    - User Interface
+    - [ ] Lose condition.
+    - [X] Introduce software key repeat.
+    - [ ] Introduce shadow and hardrops.
+    - [ ] Introduce score keeping.
+    - [ ] User Interface. Includes starting game screen, exiting game
+      confirmation pop-ups.
 
 ## 2021-06-02
 
@@ -41,3 +43,20 @@ The game engine delays are all measured in terms of frames. This approach is
 much simpler to handle and for this small game witouth "real" phyisics it works
 just fine.  Trying to implement a time-based delay would mean to refactor the
 whole engine.
+
+
+## 2021-06-25
+
+Implemented finally the in-game key repeat/delay emulation. Cleaned up a bit and
+encapsulated more of the code. Apart from the super rotation system, game
+mechanics are all implemented and tested. No more bugs!
+
+Now I'm introducing text data structures to the game which will form the base for
+the simple UI system. This requires to use yet another feature of the SDL lib,
+namely Textures, which I'm now studying. It may require some iterations before I
+get it right and clean.
+
+Leaving super rotation system for later. It is simpler to implement but I want
+to focus now in having a full "game" experience before polishing details.
+
+
