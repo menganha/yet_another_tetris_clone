@@ -2,15 +2,16 @@
 
 Todo List
 
-    - [X] Introduce a cache with the next piece to be dispatched
-    - [ ] Introduce the Super Rotation System. This includes wall kicks and things
-      such as T-spins.
-    - [ ] Lose condition.
-    - [X] Introduce software key repeat.
-    - [ ] Introduce shadow and hardrops.
-    - [ ] Introduce score keeping.
-    - [ ] User Interface. Includes starting game screen, exiting game
-      confirmation pop-ups.
+- [X] Introduce a cache with the next piece to be dispatched
+- [ ] Introduce the Super Rotation System. This includes wall kicks and things
+  such as T-spins.
+- [ ] Lose condition.
+- [X] Introduce software key repeat.
+- [ ] Introduce shadow and hardrops.
+- [X] Introduce score keeping.
+- [X] Introduce level difficult system.
+- [ ] User Interface. Includes starting game screen, exiting game
+  confirmation pop-ups.
 
 ## 2021-06-02
 
@@ -60,3 +61,12 @@ Leaving super rotation system for later. It is simpler to implement but I want
 to focus now in having a full "game" experience before polishing details.
 
 
+## 2021-06-26
+
+Introduced text rendering in game and score keeping (points are accoding to the
+modern guidelines (see https://tetris.wiki/Scoring). Not yet a level mechanics,
+which should be simple to include (increased gravity, more points per cleared
+row, etc.). 
+
+Text class seems all over the place. I'm thinking of blundling them together in
+some UI class that takes care of the loading, etc.
