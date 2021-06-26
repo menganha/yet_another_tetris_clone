@@ -2,7 +2,7 @@
 
 int main() {
   Game gameApp = Game();
-  gameApp.gameLoop();
+  gameApp.RunLoop();
 
   return 0;
 }

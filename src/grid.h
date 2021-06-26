@@ -21,6 +21,7 @@ public:
   };
   void Render(SDL_Renderer* renderer) const;
   void Update();
+  int  get_completed_rows() const;
   void set_cell(int idx_x, int idx_y, bool occupation, SDL_Color color);
   Cell get_cell(int idx_x, int idx_y) const;
 
@@ -30,9 +31,11 @@ private:
 
   CellGrid        cell_grid_;
   SDL_Point const origin_;
-  SDL_Rect        coord_to_rect(int idx_x, int idx_y) const;
+  int             completed_rows_;
 
-  int             ClearCompletedRows(); // Also returns number of completed rows
+  int             ClearedRowsToScore(int const cleared_rows);
+  SDL_Rect        CoordToRect(int const idx_x, int const idx_y) const;
+  void            ClearCompletedRows();
   void            RenderLines(SDL_Renderer* renderer) const;
   void            RenderBlocks(SDL_Renderer* renderer) const;
 };

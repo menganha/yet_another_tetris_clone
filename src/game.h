@@ -8,9 +8,12 @@
 #include "input.h"
 #include "tetromino.h"
 #include "tetromino_manager.h"
+#include "text.h"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <array>
 #include <iostream>
+#include <string>
 
 class Game
 {
@@ -18,25 +21,29 @@ public:
   Game();
   ~Game();
 
-  void gameLoop();
+  void RunLoop();
 
 private:
   bool             is_running_;
-  bool             in_landing_position;
-  SDL_Event        mEvent;
+  int              score_;
+  int              level_;
   Input            input_;
-  SDL_Window*      mWindow;
-  SDL_Renderer*    mRenderer;
+  SDL_Window*      window_;
+  SDL_Renderer*    renderer_;
   Tetromino*       pTetromino_;
   TetrominoManager mTetrominoManager;
   Grid             grid_;
   Counter          lock_delay_; // Frame until the landed piece locks in position
   Counter          fall_delay_; // Amount of frames to wait till the tetromino falls by one unit
+  Text             next_piece_text_;
+  Text             score_text_;
+  Text             score_value_text_;
 
-  int              init();
-  void             update();
-  void             render();
-  void             draw();
+  int              Init();
+  void             Update();
+  void             Render();
+  void             Draw();
+  int              ClearedRowsToScore(int const cleared_rows) const;
 };
 
 #endif

@@ -27,7 +27,7 @@ TetrominoManager::GetNextTetromino()
 void
 TetrominoManager::RenderCachedTetromino(SDL_Renderer* renderer) const
 {
-  cache_->RenderIntitialStateAt(renderer, constant::kGridX1 + 20, constant::kGridY0 + 50);
+  cache_->RenderIntitialStateAt(renderer, constant::kNextPiecePosX, constant::kNextPiecePosY);
 }
 
 Tetromino*

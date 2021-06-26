@@ -1,33 +1,50 @@
 #include "game.h"
 
 Game::Game()
-  : input_{ 3, 10, 5 }
+  : is_running_{ false }
+  , score_{ 0 }
+  , level_{ 1 }
+  , input_{ 3, 10, 5 }
+  , window_{ nullptr }
+  , renderer_{ nullptr }
+  , pTetromino_{ nullptr }
   , lock_delay_{ 30 }
   , fall_delay_{ 50 }
+  , next_piece_text_{ "NEXT", colors::WHITE, constant::kNextTextPosX, constant::kNextTextPosY }
+  , score_text_{ "SCORE", colors::WHITE, constant::kScoreTextPosX, constant::kScoreTextPosY }
+  , score_value_text_{ "000000", colors::WHITE, constant::kScoreValueTextPosX, constant::kScoreValueTextPosY }
 {
-  if (!Game::init()) {
+  if (!Game::Init()) {
     is_running_ = true;
-    in_landing_position = false;
     pTetromino_ = mTetrominoManager.GetNextTetromino();
     lock_delay_.Reset();
     fall_delay_.Reset();
+    next_piece_text_.Load(renderer_);
+    score_text_.Load(renderer_);
+    score_value_text_.Load(renderer_);
   }
 }
 
 Game::~Game()
 {
-  SDL_DestroyRenderer(mRenderer);
-  SDL_DestroyWindow(mWindow);
-  mWindow = nullptr;
-  mRenderer = nullptr;
+  SDL_DestroyRenderer(renderer_);
+  SDL_DestroyWindow(window_);
+  window_ = nullptr;
+  renderer_ = nullptr;
+  TTF_Quit();
   SDL_Quit();
 }
 
 int
-Game::init()
+Game::Init()
 {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     std::cout << "SDL could not initialize! SDL Error " << SDL_GetError() << std::endl;
+    return -1;
+  }
+
+  if (TTF_Init() < 0) {
+    std::cout << "Could not initialize TTF extension! SDL Error " << TTF_GetError() << std::endl;
     return -1;
   }
 
@@ -35,43 +52,42 @@ Game::init()
     std::cout << "Warning: Linear texture filtering not enabled!" << std::endl;
   }
 
-  mWindow = SDL_CreateWindow("Yet Another Tetris Clone",
+  window_ = SDL_CreateWindow("Yet Another Tetris Clone",
                              SDL_WINDOWPOS_UNDEFINED,
                              SDL_WINDOWPOS_UNDEFINED,
                              constant::kScreenWidth,
                              constant::kScreenSize,
                              SDL_WINDOW_SHOWN);
-  if (mWindow == nullptr) {
+  if (window_ == nullptr) {
     std::cout << "Window could not be created! SDL Error: " << SDL_GetError() << std::endl;
     return -1;
   }
 
-  mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-  if (mRenderer == nullptr) {
+  renderer_ = SDL_CreateRenderer(window_, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+  if (renderer_ == nullptr) {
     std::cout << "Renderer could not be created SDL Error: " << SDL_GetError() << std::endl;
     return -1;
   }
 
-  SDL_SetRenderDrawBlendMode(mRenderer, SDL_BLENDMODE_BLEND);
+  SDL_SetRenderDrawBlendMode(renderer_, SDL_BLENDMODE_BLEND);
 
   return 0;
 }
 
 void
-Game::gameLoop()
+Game::RunLoop()
 {
   while (is_running_) {
-    update();
-    render();
-    draw();
+    Update();
+    Render();
+    Draw();
   }
 }
 
 void
-Game::update()
+Game::Update()
 {
   input_.Update();
-  grid_.Update();
   fall_delay_.Update();
 
   if (input_.Quit()) {
@@ -80,7 +96,7 @@ Game::update()
 
   // Check if is in a position for landing
   pTetromino_->CacheCoordinates();
-  in_landing_position = pTetromino_->Lands(grid_);
+  bool in_landing_position = pTetromino_->Lands(grid_);
 
   if (in_landing_position) {
     lock_delay_.Update();
@@ -119,20 +135,45 @@ Game::update()
     pTetromino_->ResetPosition();
     fall_delay_.Reset();
   }
+
+  // Update grid and counts cleared rows
+  grid_.Update();
+  if (grid_.get_completed_rows() != 0) {
+    score_ += ClearedRowsToScore(grid_.get_completed_rows());
+    auto not_padded = std::to_string(score_);
+    score_value_text_.ChangeString(renderer_, std::string(6 - not_padded.length(), '0') + not_padded);
+  }
 }
 
 void
-Game::render()
+Game::Render()
 {
-  SDL_SetRenderDrawColor(mRenderer, colors::BLACK.r, colors::BLACK.g, colors::BLACK.b, colors::BLACK.a);
-  SDL_RenderClear(mRenderer);
-  grid_.Render(mRenderer);
-  pTetromino_->Render(mRenderer);
-  mTetrominoManager.RenderCachedTetromino(mRenderer);
+  SDL_SetRenderDrawColor(renderer_, colors::BLACK.r, colors::BLACK.g, colors::BLACK.b, colors::BLACK.a);
+  SDL_RenderClear(renderer_);
+  grid_.Render(renderer_);
+  pTetromino_->Render(renderer_);
+  mTetrominoManager.RenderCachedTetromino(renderer_);
+  next_piece_text_.Render(renderer_);
+  score_text_.Render(renderer_);
+  score_value_text_.Render(renderer_);
 }
 
 void
-Game::draw()
+Game::Draw()
 {
-  SDL_RenderPresent(mRenderer);
+  SDL_RenderPresent(renderer_);
+}
+
+int
+Game::ClearedRowsToScore(int const cleared_rows) const
+{
+  if (cleared_rows == 4) {
+    return 800 * level_;
+  } else if (cleared_rows == 3) {
+    return 500 * level_;
+  } else if (cleared_rows == 2) {
+    return 300 * level_;
+  } else { // just one row
+    return 100 * level_;
+  }
 }

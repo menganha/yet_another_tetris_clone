@@ -2,6 +2,7 @@
 
 Grid::Grid()
   : origin_{ constant::kGridX0, constant::kGridY0 }
+  , completed_rows_{ 0 }
 {}
 
 void
@@ -28,7 +29,7 @@ Grid::RenderBlocks(SDL_Renderer* renderer) const
                                cell_grid_[idy][idx].color.g,
                                cell_grid_[idy][idx].color.b,
                                cell_grid_[idy][idx].color.a);
-        SDL_Rect tmp_Rect = Grid::coord_to_rect(idx, idy);
+        SDL_Rect tmp_Rect = Grid::CoordToRect(idx, idy);
         SDL_RenderFillRect(renderer, &tmp_Rect);
       }
     }
@@ -69,7 +70,7 @@ Grid::RenderLines(SDL_Renderer* renderer) const
 }
 
 SDL_Rect
-Grid::coord_to_rect(int ind_x, int ind_y) const
+Grid::CoordToRect(int ind_x, int ind_y) const
 {
   SDL_Rect rect{ ind_x * constant::kCellSize + constant::kGridX0,
                  ind_y * constant::kCellSize + constant::kGridY0,
@@ -78,16 +79,16 @@ Grid::coord_to_rect(int ind_x, int ind_y) const
   return rect;
 }
 
-int
+void
 Grid::ClearCompletedRows()
 {
+  completed_rows_ = 0;
   auto is_occupied = [](Cell cell) { return cell.occupied == true; };
-  int  n_completed_rows = 0;
-  int  row = constant::kNRows - 1;
+  int row = constant::kNRows - 1;
   while (std::any_of(cell_grid_[row].begin(), cell_grid_[row].end(), is_occupied) && row > 0) {
 
     if (std::all_of(cell_grid_[row].begin(), cell_grid_[row].end(), is_occupied)) {
-      ++n_completed_rows;
+      ++completed_rows_;
       for (int tmp_row{ row + 1 }; tmp_row-- > 1;) {
         cell_grid_[tmp_row] = cell_grid_[tmp_row - 1];
       }
@@ -95,7 +96,11 @@ Grid::ClearCompletedRows()
       --row;
     }
   }
-  return n_completed_rows;
+}
+
+int 
+Grid::get_completed_rows() const{
+  return completed_rows_;
 }
 
 Grid::Cell
