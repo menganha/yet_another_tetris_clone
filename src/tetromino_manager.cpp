@@ -27,7 +27,15 @@ TetrominoManager::GetNextTetromino()
 void
 TetrominoManager::RenderCachedTetromino(SDL_Renderer* renderer) const
 {
-  cache_->RenderIntitialStateAt(renderer, constant::kNextPiecePosX, constant::kNextPiecePosY);
+  int rel_pos_x = constant::kNextPiecePosX;
+  int rel_pos_y = constant::kNextPiecePosY;
+
+  if (cache_->Type() == tdata::I_block) {
+    rel_pos_y -= constant::kCellSize;
+  } else if (cache_->Type() != tdata::O_block) {
+    rel_pos_x += constant::kCellSize / 2;
+  }
+  cache_->RenderIntitialStateAt(renderer, rel_pos_x, rel_pos_y);
 }
 
 Tetromino*

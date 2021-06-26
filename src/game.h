@@ -24,6 +24,7 @@ public:
   void RunLoop();
 
 private:
+  bool             game_over_;
   bool             is_running_;
   int              score_;
   int              level_;
@@ -38,12 +39,16 @@ private:
   Text             next_piece_text_;
   Text             score_text_;
   Text             score_value_text_;
+  Text             level_text_;
+  Text             level_value_text_;
+  Text             game_over_text_;
 
   int              Init();
   void             Update();
   void             Render();
   void             Draw();
   int              ClearedRowsToScore(int const cleared_rows) const;
+  void             HandleGameOver();
 };
 
 #endif

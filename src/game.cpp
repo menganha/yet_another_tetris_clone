@@ -1,7 +1,8 @@
 #include "game.h"
 
 Game::Game()
-  : is_running_{ false }
+  : game_over_{ false }
+  , is_running_{ false }
   , score_{ 0 }
   , level_{ 1 }
   , input_{ 3, 10, 5 }
@@ -13,6 +14,9 @@ Game::Game()
   , next_piece_text_{ "NEXT", colors::WHITE, constant::kNextTextPosX, constant::kNextTextPosY }
   , score_text_{ "SCORE", colors::WHITE, constant::kScoreTextPosX, constant::kScoreTextPosY }
   , score_value_text_{ "000000", colors::WHITE, constant::kScoreValueTextPosX, constant::kScoreValueTextPosY }
+  , level_text_{ "LEVEL", colors::WHITE, constant::kLevelTextPosX, constant::kLevelTextPosY }
+  , level_value_text_{ "1", colors::WHITE, constant::kLevelValueTextPosX, constant::kLevelValueTextPosY }
+  , game_over_text_{ "GAME OVER", colors::WHITE, constant::kGameOverTextPosX, constant::kGameOverTextPosY }
 {
   if (!Game::Init()) {
     is_running_ = true;
@@ -22,6 +26,9 @@ Game::Game()
     next_piece_text_.Load(renderer_);
     score_text_.Load(renderer_);
     score_value_text_.Load(renderer_);
+    level_text_.Load(renderer_);
+    level_value_text_.Load(renderer_);
+    game_over_text_.Load(renderer_);
   }
 }
 
@@ -78,16 +85,32 @@ void
 Game::RunLoop()
 {
   while (is_running_) {
-    Update();
+    input_.Update();
+    if (not game_over_) {
+      Update();
+    } else {
+      HandleGameOver();
+    }
     Render();
     Draw();
   }
 }
 
 void
+Game::HandleGameOver()
+{
+  // Set all cell row by row: grid_.set_cell()
+  // Release until all cells have been filled
+  // then show Game Over message
+  // reset input
+  if (input_.Quit()) {
+    is_running_ = false;
+  }
+}
+
+void
 Game::Update()
 {
-  input_.Update();
   fall_delay_.Update();
 
   if (input_.Quit()) {
@@ -134,6 +157,12 @@ Game::Update()
     pTetromino_ = mTetrominoManager.GetNextTetromino();
     pTetromino_->ResetPosition();
     fall_delay_.Reset();
+
+    // Check if tetromino is on top, signaling game over
+    if (pTetromino_->Collides(grid_)) {
+      game_over_ = true;
+      return;
+    }
   }
 
   // Update grid and counts cleared rows
@@ -156,6 +185,11 @@ Game::Render()
   next_piece_text_.Render(renderer_);
   score_text_.Render(renderer_);
   score_value_text_.Render(renderer_);
+  level_text_.Render(renderer_);
+  level_value_text_.Render(renderer_);
+  if (game_over_) {
+    game_over_text_.Render(renderer_);
+  }
 }
 
 void

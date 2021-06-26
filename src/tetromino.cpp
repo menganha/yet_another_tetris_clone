@@ -2,8 +2,10 @@
 
 Tetromino::Tetromino(tdata::TetrominoType tetromino_type, const SDL_Color color)
   : color_{ color }
-  , tetromino_type_{ tetromino_type }
-  , initial_frame_coord_{ 4 * constant::kCellSize + constant::kGridX0, constant::kGridY0 }
+  , type_{ tetromino_type }
+  , initial_frame_coord_{ tdata::AdjustedInitialPosition(tetromino_type,
+                                                         3 * constant::kCellSize + constant::kGridX0,
+                                                         constant::kGridY0) }
   , initial_rel_coord_{ tdata::kDefinition[tetromino_type] }
 {
   ResetPosition();
@@ -21,23 +23,18 @@ Tetromino::ResetPosition()
 void
 Tetromino::Render(SDL_Renderer* renderer) const
 {
-  SDL_SetRenderDrawColor(renderer, color_.r, color_.g, color_.b, color_.a);
   for (auto abs_coord : abs_coord_) {
-    SDL_Rect rect{ abs_coord.x, abs_coord.y, constant::kCellSize, constant::kCellSize };
-    SDL_RenderFillRect(renderer, &rect);
+    tdata::RenderBlock(renderer, abs_coord.x, abs_coord.y, color_);
   }
 }
 
 void
-Tetromino::RenderIntitialStateAt(SDL_Renderer* renderer, int pos_x, int pos_y) const
+Tetromino::RenderIntitialStateAt(SDL_Renderer* renderer, int const pos_x, int const pos_y) const
 {
   SDL_SetRenderDrawColor(renderer, color_.r, color_.g, color_.b, color_.a);
   for (auto rel_coord : initial_rel_coord_) {
-    SDL_Rect rect{ pos_x + rel_coord.x * constant::kCellSize,
-                   pos_y + rel_coord.y * constant::kCellSize,
-                   constant::kCellSize,
-                   constant::kCellSize };
-    SDL_RenderFillRect(renderer, &rect);
+    tdata::RenderBlock(
+      renderer, pos_x + rel_coord.x * constant::kCellSize, pos_y + rel_coord.y * constant::kCellSize, color_);
   }
 }
 
@@ -93,6 +90,12 @@ Tetromino::Lands(const Grid& grid) const
     }
   }
   return false;
+}
+
+tdata::TetrominoType
+Tetromino::Type() const
+{
+  return type_;
 }
 
 tdata::Coord

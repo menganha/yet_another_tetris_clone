@@ -24,13 +24,21 @@ Grid::RenderBlocks(SDL_Renderer* renderer) const
   for (int idy{ 0 }; idy < constant::kNRows; ++idy) {
     for (int idx{ 0 }; idx < constant::kNCols; ++idx) {
       if (cell_grid_[idy][idx].occupied) {
+        SDL_Rect rect = Grid::CoordToRect(idx, idy);
+        // inside
         SDL_SetRenderDrawColor(renderer,
                                cell_grid_[idy][idx].color.r,
                                cell_grid_[idy][idx].color.g,
                                cell_grid_[idy][idx].color.b,
                                cell_grid_[idy][idx].color.a);
-        SDL_Rect tmp_Rect = Grid::CoordToRect(idx, idy);
-        SDL_RenderFillRect(renderer, &tmp_Rect);
+        SDL_RenderFillRect(renderer, &rect);
+        // outline
+        SDL_SetRenderDrawColor(renderer,
+                               cell_grid_[idy][idx].color.r * 0.7,
+                               cell_grid_[idy][idx].color.g * 0.7,
+                               cell_grid_[idy][idx].color.b * 0.7,
+                               cell_grid_[idy][idx].color.a);
+        SDL_RenderDrawRect(renderer, &rect);
       }
     }
   }
@@ -84,7 +92,7 @@ Grid::ClearCompletedRows()
 {
   completed_rows_ = 0;
   auto is_occupied = [](Cell cell) { return cell.occupied == true; };
-  int row = constant::kNRows - 1;
+  int  row = constant::kNRows - 1;
   while (std::any_of(cell_grid_[row].begin(), cell_grid_[row].end(), is_occupied) && row > 0) {
 
     if (std::all_of(cell_grid_[row].begin(), cell_grid_[row].end(), is_occupied)) {
@@ -98,8 +106,9 @@ Grid::ClearCompletedRows()
   }
 }
 
-int 
-Grid::get_completed_rows() const{
+int
+Grid::get_completed_rows() const
+{
   return completed_rows_;
 }
 
