@@ -3,6 +3,7 @@
 
 #include "color.h"
 #include "constant.h"
+#include "tetromino_data.h"
 #include <SDL2/SDL.h>
 #include <algorithm>
 #include <array>
@@ -21,6 +22,7 @@ public:
   };
   void Render(SDL_Renderer* renderer) const;
   void Update();
+  void ClearGrid();
   int  get_completed_rows() const;
   void set_cell(int idx_x, int idx_y, bool occupation, SDL_Color color);
   Cell get_cell(int idx_x, int idx_y) const;

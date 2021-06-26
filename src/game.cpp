@@ -42,6 +42,20 @@ Game::~Game()
   SDL_Quit();
 }
 
+void
+Game::Restart()
+{
+  game_over_ = false;
+  is_running_ = true;
+  lock_delay_.Reset();
+  fall_delay_.Reset();
+  score_ = 0;
+  level_ = 1;
+  pTetromino_ = mTetrominoManager.GetNextTetromino();
+  pTetromino_->ResetPosition();
+  grid_.ClearGrid();
+}
+
 int
 Game::Init()
 {
@@ -106,29 +120,26 @@ Game::HandleGameOver()
   if (input_.Quit()) {
     is_running_ = false;
   }
+  if (input_.Action()) {
+    Restart();
+  }
 }
 
 void
 Game::Update()
 {
-  fall_delay_.Update();
 
   if (input_.Quit()) {
     is_running_ = false;
   }
 
-  // Check if is in a position for landing
+  
+  // Handle all the input. 
+  // Let tetromino fall if the frame delay is completed or doing a soft drop and no tetromino is below it
   pTetromino_->CacheCoordinates();
-  bool in_landing_position = pTetromino_->Lands(grid_);
+  fall_delay_.Update();
 
-  if (in_landing_position) {
-    lock_delay_.Update();
-  } else {
-    lock_delay_.Reset();
-  }
-
-  // Let tetromino fall if the frame delay is completed
-  if ((fall_delay_.isDone() or input_.Down()) and not in_landing_position) {
+  if ((fall_delay_.isDone() or input_.Down()) and not pTetromino_->Lands(grid_)) {
     pTetromino_->Move(0, constant::kCellSize);
     fall_delay_.Reset();
   }
@@ -149,11 +160,27 @@ Game::Update()
     }
   }
 
+  // Check if tetromino is below current piece and starts the lock counter
+  if (pTetromino_->Lands(grid_)) {
+    lock_delay_.Update();
+  } else {
+    lock_delay_.Reset();
+  }
+
   // Wait lock_delay to lock the pieces onto the grid
   if (lock_delay_.isDone()) {
+    lock_delay_.Reset();
     for (SDL_Point indices : pTetromino_->get_containing_cell_indices()) {
       grid_.set_cell(indices.x, indices.y, true, pTetromino_->GetColor());
     }
+    // Update grid and counts cleared rows
+    grid_.Update();
+    if (grid_.get_completed_rows() != 0) {
+      score_ += ClearedRowsToScore(grid_.get_completed_rows());
+      auto not_padded = std::to_string(score_);
+      score_value_text_.ChangeString(renderer_, std::string(6 - not_padded.length(), '0') + not_padded);
+    }
+    // Get Next Tetromino
     pTetromino_ = mTetrominoManager.GetNextTetromino();
     pTetromino_->ResetPosition();
     fall_delay_.Reset();
@@ -161,17 +188,9 @@ Game::Update()
     // Check if tetromino is on top, signaling game over
     if (pTetromino_->Collides(grid_)) {
       game_over_ = true;
-      return;
     }
   }
 
-  // Update grid and counts cleared rows
-  grid_.Update();
-  if (grid_.get_completed_rows() != 0) {
-    score_ += ClearedRowsToScore(grid_.get_completed_rows());
-    auto not_padded = std::to_string(score_);
-    score_value_text_.ChangeString(renderer_, std::string(6 - not_padded.length(), '0') + not_padded);
-  }
 }
 
 void

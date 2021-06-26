@@ -22,6 +22,7 @@ public:
   ~Game();
 
   void RunLoop();
+  void Restart();
 
 private:
   bool             game_over_;

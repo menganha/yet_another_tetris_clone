@@ -25,22 +25,17 @@ Grid::RenderBlocks(SDL_Renderer* renderer) const
     for (int idx{ 0 }; idx < constant::kNCols; ++idx) {
       if (cell_grid_[idy][idx].occupied) {
         SDL_Rect rect = Grid::CoordToRect(idx, idy);
-        // inside
-        SDL_SetRenderDrawColor(renderer,
-                               cell_grid_[idy][idx].color.r,
-                               cell_grid_[idy][idx].color.g,
-                               cell_grid_[idy][idx].color.b,
-                               cell_grid_[idy][idx].color.a);
-        SDL_RenderFillRect(renderer, &rect);
-        // outline
-        SDL_SetRenderDrawColor(renderer,
-                               cell_grid_[idy][idx].color.r * 0.7,
-                               cell_grid_[idy][idx].color.g * 0.7,
-                               cell_grid_[idy][idx].color.b * 0.7,
-                               cell_grid_[idy][idx].color.a);
-        SDL_RenderDrawRect(renderer, &rect);
+        tdata::RenderBlock(renderer, rect.x, rect.y, cell_grid_[idy][idx].color);
       }
     }
+  }
+}
+
+void 
+Grid::ClearGrid(){
+  for ( auto& row : cell_grid_){
+    Cell empty_cell{false, colors::BLACK};
+    std::fill(row.begin(), row.end(), empty_cell);
   }
 }
 
