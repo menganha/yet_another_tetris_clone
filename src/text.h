@@ -1,3 +1,6 @@
+#ifndef TEXT_H
+#define TEXT_H
+
 #include "color.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -20,3 +23,5 @@ private:
   SDL_Texture* texture_;
   TTF_Font*    font_;
 };
+
+#endif

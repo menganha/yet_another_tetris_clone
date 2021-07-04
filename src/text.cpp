@@ -37,3 +37,4 @@ Text::ChangeString(SDL_Renderer* renderer, std::string new_string){
   text_string_ = new_string;
   Load(renderer);
 }
+

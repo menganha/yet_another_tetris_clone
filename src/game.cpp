@@ -11,24 +11,13 @@ Game::Game()
   , pTetromino_{ nullptr }
   , lock_delay_{ 30 }
   , fall_delay_{ 50 }
-  , next_piece_text_{ "NEXT", colors::WHITE, constant::kNextTextPosX, constant::kNextTextPosY }
-  , score_text_{ "SCORE", colors::WHITE, constant::kScoreTextPosX, constant::kScoreTextPosY }
-  , score_value_text_{ "000000", colors::WHITE, constant::kScoreValueTextPosX, constant::kScoreValueTextPosY }
-  , level_text_{ "LEVEL", colors::WHITE, constant::kLevelTextPosX, constant::kLevelTextPosY }
-  , level_value_text_{ "1", colors::WHITE, constant::kLevelValueTextPosX, constant::kLevelValueTextPosY }
-  , game_over_text_{ "GAME OVER", colors::WHITE, constant::kGameOverTextPosX, constant::kGameOverTextPosY }
 {
   if (!Game::Init()) {
     is_running_ = true;
     pTetromino_ = mTetrominoManager.GetNextTetromino();
     lock_delay_.Reset();
     fall_delay_.Reset();
-    next_piece_text_.Load(renderer_);
-    score_text_.Load(renderer_);
-    score_value_text_.Load(renderer_);
-    level_text_.Load(renderer_);
-    level_value_text_.Load(renderer_);
-    game_over_text_.Load(renderer_);
+    ui.Load(renderer_);
   }
 }
 
@@ -133,8 +122,7 @@ Game::Update()
     is_running_ = false;
   }
 
-  
-  // Handle all the input. 
+  // Handle all the input.
   // Let tetromino fall if the frame delay is completed or doing a soft drop and no tetromino is below it
   pTetromino_->CacheCoordinates();
   fall_delay_.Update();
@@ -177,8 +165,7 @@ Game::Update()
     grid_.Update();
     if (grid_.get_completed_rows() != 0) {
       score_ += ClearedRowsToScore(grid_.get_completed_rows());
-      auto not_padded = std::to_string(score_);
-      score_value_text_.ChangeString(renderer_, std::string(6 - not_padded.length(), '0') + not_padded);
+      ui.UpdateScore(renderer_, score_);
     }
     // Get Next Tetromino
     pTetromino_ = mTetrominoManager.GetNextTetromino();
@@ -190,7 +177,6 @@ Game::Update()
       game_over_ = true;
     }
   }
-
 }
 
 void
@@ -201,14 +187,7 @@ Game::Render()
   grid_.Render(renderer_);
   pTetromino_->Render(renderer_);
   mTetrominoManager.RenderCachedTetromino(renderer_);
-  next_piece_text_.Render(renderer_);
-  score_text_.Render(renderer_);
-  score_value_text_.Render(renderer_);
-  level_text_.Render(renderer_);
-  level_value_text_.Render(renderer_);
-  if (game_over_) {
-    game_over_text_.Render(renderer_);
-  }
+  ui.Render(renderer_, game_over_);
 }
 
 void
