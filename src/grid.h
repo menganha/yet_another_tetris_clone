@@ -3,11 +3,8 @@
 
 #include "color.h"
 #include "constant.h"
-#include "tetromino_data.h"
 #include <SDL2/SDL.h>
-#include <algorithm>
 #include <array>
-#include <stdexcept>
 
 class Grid
 {
@@ -36,7 +33,6 @@ private:
   int             completed_rows_;
 
   int             ClearedRowsToScore(int const cleared_rows);
-  SDL_Rect        CoordToRect(int const idx_x, int const idx_y) const;
   void            ClearCompletedRows();
   void            RenderLines(SDL_Renderer* renderer) const;
   void            RenderBlocks(SDL_Renderer* renderer) const;

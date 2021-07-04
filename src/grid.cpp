@@ -1,4 +1,7 @@
 #include "grid.h"
+#include "tetromino.h"
+#include <algorithm>
+#include <stdexcept>
 
 Grid::Grid()
   : origin_{ constant::kGridX0, constant::kGridY0 }
@@ -24,17 +27,31 @@ Grid::RenderBlocks(SDL_Renderer* renderer) const
   for (int idy{ 0 }; idy < constant::kNRows; ++idy) {
     for (int idx{ 0 }; idx < constant::kNCols; ++idx) {
       if (cell_grid_[idy][idx].occupied) {
-        SDL_Rect rect = Grid::CoordToRect(idx, idy);
-        tdata::RenderBlock(renderer, rect.x, rect.y, cell_grid_[idy][idx].color);
+        Tetromino::RenderBlock(renderer,
+                               idx * constant::kCellSize + constant::kGridX0,
+                               idy * constant::kCellSize + constant::kGridY0,
+                               cell_grid_[idy][idx].color);
       }
     }
   }
+  /* int index = 0; */
+  /* for (auto const& row : cell_grid_) { */
+  /*   for (auto const& cell : row) { */
+  /*     if (cell.occupied) { */
+  /*       int x = index % constant::kNCols * constant::kCellSize + constant::kGridX0; */
+  /*       int y = index / constant::kNCols * constant::kCellSize + constant::kGridY0; */
+  /*       tdata::RenderBlock(renderer, x, y, cell.color); */
+  /*     } */
+  /*     ++index; */
+  /*   } */
+  /* } */
 }
 
-void 
-Grid::ClearGrid(){
-  for ( auto& row : cell_grid_){
-    Cell empty_cell{false, colors::BLACK};
+void
+Grid::ClearGrid()
+{
+  for (auto& row : cell_grid_) {
+    Cell empty_cell{ false, colors::BLACK };
     std::fill(row.begin(), row.end(), empty_cell);
   }
 }
@@ -70,16 +87,6 @@ Grid::RenderLines(SDL_Renderer* renderer) const
                       constant::kNRows * constant::kCellSize + 2 * idx };
     SDL_RenderDrawRect(renderer, &rect);
   }
-}
-
-SDL_Rect
-Grid::CoordToRect(int ind_x, int ind_y) const
-{
-  SDL_Rect rect{ ind_x * constant::kCellSize + constant::kGridX0,
-                 ind_y * constant::kCellSize + constant::kGridY0,
-                 constant::kCellSize,
-                 constant::kCellSize };
-  return rect;
 }
 
 void

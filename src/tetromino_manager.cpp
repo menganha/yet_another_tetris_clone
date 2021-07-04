@@ -1,15 +1,18 @@
 #include "tetromino_manager.h"
+#include "user_interface.h"
+#include <SDL2/SDL.h>
+#include <ctime>
 
 TetrominoManager::TetrominoManager()
   : mMersenne(static_cast<std::mt19937::result_type>(std::time(nullptr)))
   , cache_{ nullptr }
-  , T_block(tdata::TetrominoType::T_block, colors::LILA)
-  , L_block(tdata::TetrominoType::L_block, colors::WHITE)
-  , J_block(tdata::TetrominoType::J_block, colors::BLUE)
-  , Z_block(tdata::TetrominoType::Z_block, colors::RED)
-  , S_block(tdata::TetrominoType::S_block, colors::GREEN)
-  , O_block(tdata::TetrominoType::O_block, colors::YELLOW)
-  , I_block(tdata::TetrominoType::I_block, colors::CYAN)
+  , T_block(Tetromino::T_block, colors::LILA)
+  , L_block(Tetromino::L_block, colors::WHITE)
+  , J_block(Tetromino::J_block, colors::BLUE)
+  , Z_block(Tetromino::Z_block, colors::RED)
+  , S_block(Tetromino::S_block, colors::GREEN)
+  , O_block(Tetromino::O_block, colors::YELLOW)
+  , I_block(Tetromino::I_block, colors::CYAN)
 {
   cache_ = RandomSelection();
 }
@@ -27,12 +30,12 @@ TetrominoManager::GetNextTetromino()
 void
 TetrominoManager::RenderCachedTetromino(SDL_Renderer* renderer) const
 {
-  int rel_pos_x = constant::kNextPiecePosX;
-  int rel_pos_y = constant::kNextPiecePosY;
+  int rel_pos_x = ui::kNextPiecePosX;
+  int rel_pos_y = ui::kNextPiecePosY;
 
-  if (cache_->Type() == tdata::I_block) {
+  if (cache_->get_type() == Tetromino::I_block) {
     rel_pos_y -= constant::kCellSize;
-  } else if (cache_->Type() != tdata::O_block) {
+  } else if (cache_->get_type() != Tetromino::O_block) {
     rel_pos_x += constant::kCellSize / 2;
   }
   cache_->RenderIntitialStateAt(renderer, rel_pos_x, rel_pos_y);
