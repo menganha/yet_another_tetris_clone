@@ -21,7 +21,7 @@ private:
   SDL_Color    color_;
   SDL_Rect     rect_;
   SDL_Texture* texture_;
-  TTF_Font*    font_;
+  TTF_Font*    font_; // TODO: change this to static. We don't need 10 copies of the font
 };
 
 #endif

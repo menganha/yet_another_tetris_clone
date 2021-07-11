@@ -5,7 +5,7 @@ Text::Text(std::string text_string, SDL_Color text_color, int pos_x, int pos_y)
   , color_{ text_color }
   , rect_{ pos_x, pos_y, 0, 0 }
   , texture_{ nullptr }
-  , font_{ nullptr }
+  , font_{TTF_OpenFont("font/PressStart2P.ttf", 20)}
 
 {}
 
@@ -17,7 +17,7 @@ Text::~Text()
 void
 Text::Load(SDL_Renderer* renderer)
 {
-  font_ = TTF_OpenFont("font/PressStart2P.ttf", 20);
+  // Load the text into a surface. Needs renderer
   SDL_Surface* surface = TTF_RenderText_Solid(font_, text_string_.c_str(), color_);
   rect_.w = surface->w;
   rect_.h = surface->h;
