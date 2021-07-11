@@ -1,8 +1,6 @@
 #include "input.h"
 
-Input::Input(int down_key_repeat,
-             int horizontal_key_delay,
-             int horizontal_key_repeat)
+Input::Input(int down_key_repeat, int horizontal_key_delay, int horizontal_key_repeat)
   : controller_{
     { 0, 0 },                                        // up
     { 0, down_key_repeat },                          // down
@@ -21,7 +19,7 @@ Input::Update()
 {
   while (SDL_PollEvent(&event_)) {
     if (event_.type == SDL_QUIT) {
-      // if closing window or os recieving quiting signal then
+      // if closing window or os receiving quiting signal then
       // interpret as pressing the quit button
       controller_.quit.Update();
     }

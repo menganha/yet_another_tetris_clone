@@ -36,9 +36,7 @@ private:
 class Input
 {
 public:
-  Input(int down_key_repeat,
-        int horizontal_key_delay,
-        int horizontal_key_repeat);
+  Input(int down_key_repeat, int horizontal_key_delay, int horizontal_key_repeat);
   ~Input();
 
   void        Update();
