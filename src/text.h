@@ -10,18 +10,24 @@ class Text
 {
 
 public:
-  Text(std::string text_string, SDL_Color text_color = colors::WHITE, int pos_x = 0, int pos_y = 0);
+  Text(SDL_Renderer* renderer,
+       TTF_Font*     font,
+       std::string   text_string,
+       SDL_Color     text_color = colors::WHITE,
+       int           pos_x = 0,
+       int           pos_y = 0);
   ~Text();
-  void Render(SDL_Renderer* renderer);
-  void Load(SDL_Renderer* renderer);
-  void ChangeString(SDL_Renderer* renderer, std::string new_string);
+  void Render();
+  void ChangeString(std::string new_string);
 
 private:
-  std::string  text_string_;
-  SDL_Color    color_;
-  SDL_Rect     rect_;
-  SDL_Texture* texture_;
-  TTF_Font*    font_; // TODO: change this to static. We don't need 10 copies of the font
+  void          Load();
+  SDL_Renderer* renderer_;
+  TTF_Font*     font_;
+  std::string   text_string_;
+  SDL_Color     color_;
+  SDL_Rect      rect_;
+  SDL_Texture*  texture_;
 };
 
 #endif

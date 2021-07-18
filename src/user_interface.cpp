@@ -1,56 +1,49 @@
 #include "user_interface.h"
 
-UserInterface::UserInterface()
-  : next_piece_text_{ "NEXT", colors::WHITE, ui::kNextTextPosX, ui::kNextTextPosY }
-  , score_text_{ "SCORE", colors::WHITE, ui::kScoreTextPosX, ui::kScoreTextPosY }
-  , score_value_text_{ std::string(ui::kScoreValueMaxDigits, '0'),
+UserInterface::UserInterface(SDL_Renderer* renderer, TTF_Font* font)
+  : next_piece_text_{ renderer, font, "NEXT", colors::WHITE, ui::kNextTextPosX, ui::kNextTextPosY }
+  , score_text_{ renderer, font, "SCORE", colors::WHITE, ui::kScoreTextPosX, ui::kScoreTextPosY }
+  , score_value_text_{ renderer,
+                       font,
+                       std::string(ui::kScoreValueMaxDigits, '0'),
                        colors::WHITE,
                        ui::kScoreValueTextPosX,
                        ui::kScoreValueTextPosY }
-  , level_text_{ "LEVEL", colors::WHITE, ui::kLevelTextPosX, ui::kLevelTextPosY }
-  , level_value_text_{ std::string(ui::kLevelValueMaxDigits, '0'),
+  , level_text_{ renderer, font, "LEVEL", colors::WHITE, ui::kLevelTextPosX, ui::kLevelTextPosY }
+  , level_value_text_{ renderer,
+                       font,
+                       std::string(ui::kLevelValueMaxDigits, '0'),
                        colors::WHITE,
                        ui::kLevelValueTextPosX,
                        ui::kLevelValueTextPosY }
-  , game_over_text_{ "GAME OVER", colors::WHITE, ui::kGameOverTextPosX, ui::kGameOverTextPosY }
+  , game_over_text_{ renderer, font, "GAME OVER", colors::WHITE, ui::kGameOverTextPosX, ui::kGameOverTextPosY }
 
 {}
 
 void
-UserInterface::Load(SDL_Renderer* renderer)
+UserInterface::Render(bool game_over)
 {
-  // Cannot load on constructor as TTF module must be initialized first
-  next_piece_text_.Load(renderer);
-  score_text_.Load(renderer);
-  score_value_text_.Load(renderer);
-  level_text_.Load(renderer);
-  level_value_text_.Load(renderer);
-  game_over_text_.Load(renderer);
-}
-
-void
-UserInterface::Render(SDL_Renderer* renderer, bool game_over)
-{
-  next_piece_text_.Render(renderer);
-  score_text_.Render(renderer);
-  score_value_text_.Render(renderer);
-  level_text_.Render(renderer);
-  level_value_text_.Render(renderer);
-  if (game_over){
-    game_over_text_.Render(renderer);
+  next_piece_text_.Render();
+  score_text_.Render();
+  score_value_text_.Render();
+  level_text_.Render();
+  level_value_text_.Render();
+  if (game_over) {
+    // Overlay game over text over game grid
+    game_over_text_.Render();
   }
 }
 
 void
-UserInterface::UpdateScore(SDL_Renderer* renderer, int new_score)
+UserInterface::UpdateScore(int new_score)
 {
-  score_value_text_.ChangeString(renderer, GetPaddedString(new_score, ui::kScoreValueMaxDigits));
+  score_value_text_.ChangeString(GetPaddedString(new_score, ui::kScoreValueMaxDigits));
 }
 
 void
-UserInterface::UpdateLevel(SDL_Renderer* renderer, int new_level)
+UserInterface::UpdateLevel(int new_level)
 {
-  level_value_text_.ChangeString(renderer, GetPaddedString(new_level, ui::kLevelValueMaxDigits));
+  level_value_text_.ChangeString(GetPaddedString(new_level, ui::kLevelValueMaxDigits));
 }
 
 std::string

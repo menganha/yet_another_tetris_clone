@@ -4,15 +4,15 @@
 #include "constant.h"
 #include "text.h"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 class UserInterface
 {
 public:
-  UserInterface();
-  void Load(SDL_Renderer* renderer);
-  void Render(SDL_Renderer* renderer, bool game_over);
-  void UpdateScore(SDL_Renderer* renderer, int new_score);
-  void UpdateLevel(SDL_Renderer* renderer, int new_level);
+  UserInterface(SDL_Renderer* renderer, TTF_Font* font);
+  void Render(bool game_over);
+  void UpdateScore(int new_score);
+  void UpdateLevel(int new_level);
 
 private:
   Text        next_piece_text_;

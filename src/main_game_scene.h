@@ -1,50 +1,43 @@
-#ifndef GAME_H
-#define GAME_H
+#ifndef MAIN_GAME_SCENE_H
+#define MAIN_GAME_SCENE_H
 
-#include "color.h"
-#include "constant.h"
+class Tetromino;
 #include "counter.h"
 #include "grid.h"
 #include "input.h"
-#include "tetromino.h"
+#include "scene.h"
 #include "tetromino_manager.h"
+#include "user_interface.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
-#include <array>
-#include "user_interface.h"
-#include <iostream>
-#include <string>
 
-class Game
+class MainGameScene : public Scene
 {
 public:
-  Game();
-  ~Game();
+  MainGameScene(SDL_Renderer* renderer, TTF_Font* font);
 
   void RunLoop();
-  void Restart();
 
 private:
+  SDL_Renderer*    renderer_;
   bool             game_over_;
   bool             is_running_;
   int              score_;
   int              level_;
   Input            input_;
   UserInterface    ui;
-  SDL_Window*      window_;
-  SDL_Renderer*    renderer_;
+  TetrominoManager tetromino_manager_;
   Tetromino*       pTetromino_;
-  TetrominoManager mTetrominoManager;
   Grid             grid_;
   Counter          lock_delay_; // Frame until the landed piece locks in position
   Counter          fall_delay_; // Amount of frames to wait till the tetromino falls by one unit
 
-  int              Init();
   void             Update();
   void             Render();
   void             Draw();
   int              ClearedRowsToScore(int const cleared_rows) const;
   void             HandleGameOver();
+  void             Restart();
 };
 
 #endif

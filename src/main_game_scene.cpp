@@ -1,91 +1,41 @@
-#include "game.h"
+#include "main_game_scene.h"
+#include "color.h"
+#include "constant.h"
 
-Game::Game()
-  : game_over_{ false }
-  , is_running_{ false }
+MainGameScene::MainGameScene(SDL_Renderer* renderer, TTF_Font* font)
+  : renderer_{ renderer }
+  , game_over_{ false }
+  , is_running_{ true }
   , score_{ 0 }
   , level_{ 1 }
   , input_{ 3, 10, 5 }
-  , window_{ nullptr }
-  , renderer_{ nullptr }
-  , pTetromino_{ nullptr }
+  , ui{ renderer, font }
+  , tetromino_manager_{}
+  , pTetromino_{ tetromino_manager_.GetNextTetromino() }
   , lock_delay_{ 30 }
   , fall_delay_{ 50 }
 {
-  if (!Game::Init()) {
-    is_running_ = true;
-    pTetromino_ = mTetrominoManager.GetNextTetromino();
-    lock_delay_.Reset();
-    fall_delay_.Reset();
-    ui.Load(renderer_);
-  }
-}
-
-Game::~Game()
-{
-  SDL_DestroyRenderer(renderer_);
-  SDL_DestroyWindow(window_);
-  window_ = nullptr;
-  renderer_ = nullptr;
-  TTF_Quit();
-  SDL_Quit();
+  lock_delay_.Reset();
+  fall_delay_.Reset();
 }
 
 void
-Game::Restart()
+MainGameScene::Restart()
 {
+  // TODO: RESTART should be a private method and should be run always on exit!
   game_over_ = false;
   is_running_ = true;
   lock_delay_.Reset();
   fall_delay_.Reset();
   score_ = 0;
   level_ = 1;
-  pTetromino_ = mTetrominoManager.GetNextTetromino();
+  pTetromino_ = tetromino_manager_.GetNextTetromino();
   pTetromino_->ResetPosition();
   grid_.ClearGrid();
 }
 
-int
-Game::Init()
-{
-  if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-    std::cout << "SDL could not initialize! SDL Error " << SDL_GetError() << std::endl;
-    return -1;
-  }
-
-  if (TTF_Init() < 0) {
-    std::cout << "Could not initialize TTF extension! SDL Error " << TTF_GetError() << std::endl;
-    return -1;
-  }
-
-  if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
-    std::cout << "Warning: Linear texture filtering not enabled!" << std::endl;
-  }
-
-  window_ = SDL_CreateWindow("Yet Another Tetris Clone",
-                             SDL_WINDOWPOS_UNDEFINED,
-                             SDL_WINDOWPOS_UNDEFINED,
-                             constant::kScreenWidth,
-                             constant::kScreenSize,
-                             SDL_WINDOW_SHOWN);
-  if (window_ == nullptr) {
-    std::cout << "Window could not be created! SDL Error: " << SDL_GetError() << std::endl;
-    return -1;
-  }
-
-  renderer_ = SDL_CreateRenderer(window_, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-  if (renderer_ == nullptr) {
-    std::cout << "Renderer could not be created SDL Error: " << SDL_GetError() << std::endl;
-    return -1;
-  }
-
-  SDL_SetRenderDrawBlendMode(renderer_, SDL_BLENDMODE_BLEND);
-
-  return 0;
-}
-
 void
-Game::RunLoop()
+MainGameScene::RunLoop()
 {
   while (is_running_) {
     input_.Update();
@@ -100,11 +50,10 @@ Game::RunLoop()
 }
 
 void
-Game::HandleGameOver()
+MainGameScene::HandleGameOver()
 {
-  // Set all cell row by row: grid_.set_cell()
-  // Release until all cells have been filled
-  // then show Game Over message
+  // Set all cells row by row: grid_.set_cell()
+  // Release until all cells have been filled then show Game Over message.
   // reset input
   if (input_.Quit()) {
     is_running_ = false;
@@ -115,18 +64,19 @@ Game::HandleGameOver()
 }
 
 void
-Game::Update()
+MainGameScene::Update()
 {
 
   if (input_.Quit()) {
     is_running_ = false;
   }
 
-  // Handle all the input.
-  // Let tetromino fall if the frame delay is completed or doing a soft drop and no tetromino is below it
+  // Save Coordinates and update the delay counter
   pTetromino_->CacheCoordinates();
   fall_delay_.Update();
 
+  // Handle all input
+  // Let tetromino fall if the frame delay is completed or doing a soft drop and no tetromino is below it
   if ((fall_delay_.isDone() or input_.Down()) and not pTetromino_->Lands(grid_)) {
     pTetromino_->Move(0, constant::kCellSize);
     fall_delay_.Reset();
@@ -165,10 +115,10 @@ Game::Update()
     grid_.Update();
     if (grid_.get_completed_rows() != 0) {
       score_ += ClearedRowsToScore(grid_.get_completed_rows());
-      ui.UpdateScore(renderer_, score_);
+      ui.UpdateScore(score_);
     }
     // Get Next Tetromino
-    pTetromino_ = mTetrominoManager.GetNextTetromino();
+    pTetromino_ = tetromino_manager_.GetNextTetromino();
     pTetromino_->ResetPosition();
     fall_delay_.Reset();
 
@@ -180,24 +130,24 @@ Game::Update()
 }
 
 void
-Game::Render()
+MainGameScene::Render()
 {
   SDL_SetRenderDrawColor(renderer_, colors::BLACK.r, colors::BLACK.g, colors::BLACK.b, colors::BLACK.a);
   SDL_RenderClear(renderer_);
   grid_.Render(renderer_);
   pTetromino_->Render(renderer_);
-  mTetrominoManager.RenderCachedTetromino(renderer_);
-  ui.Render(renderer_, game_over_);
+  tetromino_manager_.RenderCachedTetromino(renderer_);
+  ui.Render(game_over_);
 }
 
 void
-Game::Draw()
+MainGameScene::Draw()
 {
   SDL_RenderPresent(renderer_);
 }
 
 int
-Game::ClearedRowsToScore(int const cleared_rows) const
+MainGameScene::ClearedRowsToScore(int const cleared_rows) const
 {
   if (cleared_rows == 4) {
     return 800 * level_;
