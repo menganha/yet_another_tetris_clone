@@ -8,6 +8,7 @@ MainGameScene::MainGameScene(SDL_Renderer* renderer, TTF_Font* font)
   , is_running_{ true }
   , score_{ 0 }
   , level_{ 1 }
+  , next_scene_type_{ SceneType::kNoScene }
   , input_{ 3, 10, 5 }
   , ui{ renderer, font }
   , tetromino_manager_{}
@@ -49,6 +50,12 @@ MainGameScene::RunLoop()
   }
 }
 
+SceneType
+MainGameScene::NextSceneType() const
+{
+  return next_scene_type_;
+}
+
 void
 MainGameScene::HandleGameOver()
 {
@@ -57,6 +64,7 @@ MainGameScene::HandleGameOver()
   // reset input
   if (input_.Quit()) {
     is_running_ = false;
+    next_scene_type_ = SceneType::kNoScene;
   }
   if (input_.Action()) {
     Restart();
@@ -69,6 +77,7 @@ MainGameScene::Update()
 
   if (input_.Quit()) {
     is_running_ = false;
+    next_scene_type_ = SceneType::kNoScene;
   }
 
   // Save Coordinates and update the delay counter

@@ -40,7 +40,7 @@ SDLEngine::Init()
                              SDL_WINDOWPOS_UNDEFINED,
                              SDL_WINDOWPOS_UNDEFINED,
                              constant::kScreenWidth,
-                             constant::kScreenSize,
+                             constant::kScreenHeight,
                              SDL_WINDOW_SHOWN);
   if (window_ == nullptr) {
     std::string err_msg = "Window could not be created! SDL Error: ";

@@ -6,6 +6,7 @@ class Tetromino;
 #include "grid.h"
 #include "input.h"
 #include "scene.h"
+#include "scene_type.h"
 #include "tetromino_manager.h"
 #include "user_interface.h"
 #include <SDL2/SDL.h>
@@ -15,8 +16,8 @@ class MainGameScene : public Scene
 {
 public:
   MainGameScene(SDL_Renderer* renderer, TTF_Font* font);
-
-  void RunLoop();
+  void      RunLoop();
+  SceneType NextSceneType() const;
 
 private:
   SDL_Renderer*    renderer_;
@@ -24,6 +25,7 @@ private:
   bool             is_running_;
   int              score_;
   int              level_;
+  SceneType        next_scene_type_;
   Input            input_;
   UserInterface    ui;
   TetrominoManager tetromino_manager_;
