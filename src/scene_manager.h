@@ -9,7 +9,9 @@ class SceneManager
 {
 public:
   SceneManager() noexcept;
+  // Runs the game with the initial scene
   void RunGame(SceneType initial_scene_type);
+  // Register scenes with a certain input type
   void RegisterScene(Scene* scene, SceneType scene_type);
 
 private:
