@@ -40,3 +40,10 @@ Text::ChangeString(std::string new_string)
   text_string_ = new_string;
   Load();
 }
+
+void
+Text::Move(int new_pos_x, int new_pos_y)
+{
+  rect_.x = new_pos_x;
+  rect_.y = new_pos_y;
+}

@@ -26,10 +26,8 @@ private:
   Text                 menu_quit_;
   void                 Update();
   void                 Draw();
-  static constexpr int kStartXpos = constant::kScreenWidth / 2 - 10;
   static constexpr int kStartYpos = constant::kScreenHeight / 2;
-  static constexpr int kQuitXpos = kStartXpos;
-  static constexpr int kQuitYpos = kStartYpos + 10;
+  static constexpr int kQuitYpos = kStartYpos + 30;
 };
 
 #endif

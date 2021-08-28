@@ -19,6 +19,9 @@ public:
   ~Text();
   void Render();
   void ChangeString(std::string new_string);
+  void Highlight();
+  void Move(int new_pos_x, int new_pos_y);
+  int  Width() const { return rect_.w; };
 
 private:
   void          Load();

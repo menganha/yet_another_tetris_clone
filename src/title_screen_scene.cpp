@@ -7,9 +7,13 @@ TitleScreenScene::TitleScreenScene(SDL_Renderer* renderer, TTF_Font* font)
   , exit_{ false }
   , next_scene_type_{ SceneType::kNoScene }
   , input_{ 0, 10, 5 } // TODO: Test whether zero correspond to a infinite repeat rate
-  , menu_start_{ renderer, font, "START", colors::WHITE, kStartXpos, kStartYpos }
-  , menu_quit_{ renderer, font, "QUIT", colors::WHITE, kQuitXpos, kQuitYpos }
-{}
+  , menu_start_{ renderer, font, "START", colors::WHITE }
+  , menu_quit_{ renderer, font, "QUIT", colors::WHITE }
+{
+  //  Centers the Menu items
+  menu_start_.Move((constant::kScreenWidth - menu_start_.Width()) / 2, kStartYpos);
+  menu_quit_.Move((constant::kScreenWidth - menu_quit_.Width()) / 2, kQuitYpos);
+}
 
 void
 TitleScreenScene::RunLoop()
