@@ -33,6 +33,9 @@ TitleScreenScene::Update()
   if (input_.Action()) {
     exit_ = true;
     next_scene_type_ = SceneType::kMainGame;
+  } else if (input_.Quit()){
+    exit_ = true;
+    next_scene_type_ = SceneType::kNoScene;
   }
 }
 
