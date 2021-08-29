@@ -2,8 +2,8 @@
 
 Input::Input(int down_key_repeat, int horizontal_key_delay, int horizontal_key_repeat)
   : controller_{
-    { 0, 0 },                                        // up
-    { 0, down_key_repeat },                          // down
+    { 0, down_key_repeat},                           // up
+    { 0, down_key_repeat},                           // down
     { horizontal_key_delay, horizontal_key_repeat }, // left
     { horizontal_key_delay, horizontal_key_repeat }, // right
     { 0, 0, false },                                 // action
@@ -25,6 +25,11 @@ Input::Update()
     }
   }
   const Uint8* currentKeyStates = SDL_GetKeyboardState(nullptr);
+  if (currentKeyStates[SDL_SCANCODE_UP]) {
+    controller_.up.Update();
+  } else {
+    controller_.up.Reset();
+  }
   if (currentKeyStates[SDL_SCANCODE_DOWN]) {
     controller_.down.Update();
   } else {
