@@ -1,8 +1,6 @@
 #ifndef CONSTANT_H
 #define CONSTANT_H
 
-#include <array>
-
 namespace constant {
 
   constexpr int kScreenWidth = 640;
