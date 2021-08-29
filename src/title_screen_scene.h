@@ -22,6 +22,8 @@ private:
   bool                 exit_;
   SceneType            next_scene_type_;
   Input                input_;
+  int                  current_selected_item; // represents the menu item selected
+  int                  previous_selected_item; // represents the menu item selected
   Text                 menu_start_;
   Text                 menu_quit_;
   void                 Update();
