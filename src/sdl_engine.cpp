@@ -1,4 +1,5 @@
 #include "sdl_engine.h"
+#include <SDL2/SDL_mixer.h>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -16,6 +17,7 @@ SDLEngine::~SDLEngine()
   window_ = nullptr;
   renderer_ = nullptr;
   TTF_Quit();
+  Mix_Quit();
   SDL_Quit();
 }
 
@@ -54,6 +56,11 @@ SDLEngine::Init()
   }
 
   SDL_SetRenderDrawBlendMode(renderer_, SDL_BLENDMODE_BLEND);
+  
+  if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+    std::string err_msg = "Could not initialize SDL_mixer extension! SDL Error: ";
+    throw std::runtime_error(err_msg + Mix_GetError());
+  }
 
   font_ = TTF_OpenFont("font/PressStart2P.ttf", 20);
   if (font_ == nullptr) {
