@@ -42,6 +42,13 @@ Text::ChangeString(std::string new_string)
 }
 
 void
+Text::ChangeColor(SDL_Color new_color)
+{
+  color_ = new_color;
+  Load();
+}
+
+void
 Text::Move(int new_pos_x, int new_pos_y)
 {
   rect_.x = new_pos_x;
