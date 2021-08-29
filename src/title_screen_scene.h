@@ -5,6 +5,7 @@
 #include "input.h"
 #include "scene.h"
 #include "scene_type.h"
+#include "sound.h"
 #include "text.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -22,10 +23,11 @@ private:
   bool                 exit_;
   SceneType            next_scene_type_;
   Input                input_;
-  int                  current_selected_item; // represents the menu item selected
-  int                  previous_selected_item; // represents the menu item selected
+  int                  current_selected_item;  // represents the menu item selected
+  bool                 menu_change_state;
   Text                 menu_start_;
   Text                 menu_quit_;
+  Sound                menu_sound_;
   void                 Update();
   void                 Draw();
   static constexpr int kStartYpos = constant::kScreenHeight / 2;
