@@ -15,6 +15,7 @@ MainGameScene::MainGameScene(SDL_Renderer* renderer, TTF_Font* font)
   , pTetromino_{ tetromino_manager_.GetNextTetromino() }
   , lock_delay_{ 30 }
   , fall_delay_{ 50 }
+  , sound_block_lands_{"block_lands.wav"}
 {
   lock_delay_.Reset();
   fall_delay_.Reset();
@@ -118,6 +119,7 @@ MainGameScene::Update()
   // Wait lock_delay to lock the pieces onto the grid
   if (lock_delay_.isDone()) {
     lock_delay_.Reset();
+    sound_block_lands_.Play();
     for (SDL_Point indices : pTetromino_->get_containing_cell_indices()) {
       grid_.set_cell(indices.x, indices.y, true, pTetromino_->GetColor());
     }

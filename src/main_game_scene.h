@@ -11,6 +11,7 @@ class Tetromino;
 #include "user_interface.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include "sound.h"
 
 class MainGameScene : public Scene
 {
@@ -33,6 +34,7 @@ private:
   Grid             grid_;
   Counter          lock_delay_; // Frame until the landed piece locks in position
   Counter          fall_delay_; // Amount of frames to wait till the tetromino falls by one unit
+  Sound            sound_block_lands_;
 
   void             Update();
   void             Render();
