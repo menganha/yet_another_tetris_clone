@@ -89,6 +89,7 @@ MainGameScene::Update()
   if ((fall_delay_.isDone() or input_.Down()) and not pTetromino_->Lands(grid_)) {
     pTetromino_->Move(0, constant::kCellSize);
     fall_delay_.Reset();
+    return;
   }
   if (input_.Left()) {
     pTetromino_->Move(-constant::kCellSize, 0);
