@@ -17,6 +17,7 @@ TitleScreenScene::TitleScreenScene(SDL_Renderer* renderer, TTF_Font* font)
   , game_title_image_texture_{ nullptr }
   , game_title_image_position_{ 0, 0, 0, 0 }
   , menu_sound_{ "menu_select.wav" }
+  , menu_confirm_sound_{ "menu_confirm.wav" }
 {
   //  Centers the Menu items
   menu_start_.Move((constant::kScreenWidth - menu_start_.Width()) / 2, kStartYpos);
@@ -85,6 +86,7 @@ TitleScreenScene::Update()
   if (input_.Action() and current_selected_item == 0) {
     exit_ = true;
     next_scene_type_ = SceneType::kMainGame;
+    menu_confirm_sound_.Play();
   } else if ((input_.Action() and current_selected_item == 1) or input_.Quit()) {
     exit_ = true;
     next_scene_type_ = SceneType::kNoScene;

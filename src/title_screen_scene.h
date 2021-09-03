@@ -33,6 +33,7 @@ private:
   SDL_Texture*         game_title_image_texture_;
   SDL_Rect             game_title_image_position_;
   Sound                menu_sound_;
+  Sound                menu_confirm_sound_;
   void                 Update();
   void                 Draw();
   static constexpr int kTitleYpos = constant::kScreenHeight / 2 - 80;
