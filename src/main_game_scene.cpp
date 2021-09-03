@@ -15,7 +15,8 @@ MainGameScene::MainGameScene(SDL_Renderer* renderer, TTF_Font* font)
   , pTetromino_{ tetromino_manager_.GetNextTetromino() }
   , lock_delay_{ 30 }
   , fall_delay_{ 50 }
-  , sound_block_lands_{"block_lands.wav"}
+  , sound_block_lands_{ "block_lands.wav" }
+  , sound_clear_rows_{ "clear_rows.wav" }
 {
   lock_delay_.Reset();
   fall_delay_.Reset();
@@ -126,9 +127,10 @@ MainGameScene::Update()
     // Update grid and counts cleared rows
     grid_.Update();
     if (grid_.get_completed_rows() != 0) {
+      sound_clear_rows_.Play();
       score_ += ClearedRowsToScore(grid_.get_completed_rows());
       ui.UpdateScore(score_);
-    }
+    } 
     // Get Next Tetromino
     pTetromino_ = tetromino_manager_.GetNextTetromino();
     pTetromino_->ResetPosition();

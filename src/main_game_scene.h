@@ -35,6 +35,7 @@ private:
   Counter          lock_delay_; // Frame until the landed piece locks in position
   Counter          fall_delay_; // Amount of frames to wait till the tetromino falls by one unit
   Sound            sound_block_lands_;
+  Sound            sound_clear_rows_;
 
   void             Update();
   void             Render();
