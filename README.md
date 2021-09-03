@@ -1,13 +1,13 @@
 # Yet Another Tetris Clone (YATC)
-&NewLine;
-&NewLine;
-&NewLine;
+<br/>
+<br/>
+<br/>
 <p align="center">
   <img src="./title.png" />
 </p>
-&NewLine;
-&NewLine;
-&NewLine;
+<br/>
+<br/>
+<br/>
 
 Tetris clone made with C++ and the SDL 2.0 library.
 
