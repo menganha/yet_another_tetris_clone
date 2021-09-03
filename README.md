@@ -1,19 +1,16 @@
 # Yet Another Tetris Clone (YATC)
 <br/>
 <br/>
-<br/>
 <p align="center">
-  <img src="./title.png" />
+  <img src="./title.png", width="200" />
 </p>
 <br/>
 <br/>
-<br/>
+<p align="center">
+  <img src="./demo.gif" />
+</p>
 
 Tetris clone made with C++ and the SDL 2.0 library.
-
-Here's a nice demo!
-
-![demo](./demo.gif)
 
 ## Requirements
 
@@ -23,5 +20,5 @@ Here's a nice demo!
 
 ## Build instructions
 
-  * Just run `make`
+  * run `make`
 
