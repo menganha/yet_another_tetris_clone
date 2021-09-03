@@ -21,7 +21,7 @@ DBG_DEPS := $(DBG_OBJS:.o=.d)
 
 # Compiler Settings
 CC := g++
-LINKER_FLAGS := -lSDL2_ttf -lSDL2 -lSDL2_mixer
+LINKER_FLAGS := -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf 
 INCLUDE_FLAGS := #-Iinclude
 COMPILER_FLAGS := -Wall -Wextra -Wshadow -Wpedantic -x c++ -std=c++17 -MMD -MP $(LINKER_FLAGS)
 DEBUG_FLAGS := -g -O0

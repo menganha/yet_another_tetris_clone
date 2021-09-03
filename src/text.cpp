@@ -14,6 +14,8 @@ Text::Text(SDL_Renderer* renderer, TTF_Font* font, std::string text_string, SDL_
 Text::~Text()
 {
   SDL_DestroyTexture(texture_);
+  texture_ = nullptr;
+  rect_ = {0,0,0,0};
 }
 
 void

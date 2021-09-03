@@ -1,4 +1,5 @@
 #include "sdl_engine.h"
+#include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
 #include <iostream>
 #include <stdexcept>
@@ -56,7 +57,12 @@ SDLEngine::Init()
   }
 
   SDL_SetRenderDrawBlendMode(renderer_, SDL_BLENDMODE_BLEND);
-  
+
+  if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
+    std::string err_msg = "Could not initialize SDL_image extension! SDL Error: ";
+    throw std::runtime_error(err_msg + IMG_GetError());
+  }
+
   if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
     std::string err_msg = "Could not initialize SDL_mixer extension! SDL Error: ";
     throw std::runtime_error(err_msg + Mix_GetError());
