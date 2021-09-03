@@ -39,7 +39,6 @@ TitleScreenScene::get_image()
   // We don't have a class for loading images since we use it only for the title screen
   // This should suffice. Freeing of the title image is done on this class constructor
   SDL_Surface* surface = IMG_Load("title.png");
-  SDL_SetColorKey(surface, SDL_TRUE, SDL_MapRGB(surface->format, colors::TRUE_WHITE.r, colors::TRUE_WHITE.g, colors::TRUE_WHITE.r));
   game_title_image_texture_ = SDL_CreateTextureFromSurface(renderer_, surface);
   game_title_image_position_.w = surface->w;
   game_title_image_position_.h = surface->h;
