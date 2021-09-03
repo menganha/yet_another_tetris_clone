@@ -21,20 +21,21 @@ DBG_DEPS := $(DBG_OBJS:.o=.d)
 
 # Compiler Settings
 CC := g++
-LINKER_FLAGS := -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf 
+LINKER_FLAGS := -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
 INCLUDE_FLAGS := #-Iinclude
 COMPILER_FLAGS := -Wall -Wextra -Wshadow -Wpedantic -x c++ -std=c++17 -MMD -MP $(LINKER_FLAGS)
+RELEASE_FLAGS := -O3
 DEBUG_FLAGS := -g -O0
 
 # This is the main program target
 $(BIN_DIR)/$(EXECUTABLE): $(OBJS)
 	@mkdir -p  $(BIN_DIR)
-	$(CC) $(OBJS) $(COMPILER_FLAGS) -o $@
+	$(CC) $(OBJS) $(COMPILER_FLAGS) $(RELEASE_FLAGS) -o $@
 	@compiledb -n make
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(BUILD_DIR)
-	$(CC) -c $(COMPILER_FLAGS) $< -o $@
+	$(CC) -c $(COMPILER_FLAGS) $(RELEASE_FLAGS) $< -o $@
 
 json_compilation:
 	compiledb -n make
