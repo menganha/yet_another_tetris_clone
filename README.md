@@ -13,8 +13,8 @@ Tetris clone made with C++ and the SDL 2.0 library.
 
 ## Requirements
 
-  * A GNU/Linux Distribution
-  * The gcc C++ compiler
+  * A GNU/Linux Distribution.
+  * The gcc C++ compiler.
   * SDL2 Library. You can normally install the compiled libraries 
   system wide using the package manager of your distribution, e.g.,
     * Debian based (Including Ubuntu): `sudo apt-get install libsdl2-2.0-0
@@ -26,3 +26,7 @@ Tetris clone made with C++ and the SDL 2.0 library.
 
   * run `make`
 
+## Controls
+
+  * Move Pieces: Arrow Keys.
+  * Confirm Selection / Rotate Pieces: X Key.
