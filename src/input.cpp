@@ -50,6 +50,11 @@ Input::Update()
   } else {
     controller_.action.Reset();
   }
+  if (currentKeyStates[SDL_SCANCODE_RETURN]) {
+    controller_.pause.Update();
+  } else {
+    controller_.pause.Reset();
+  }
 }
 
 Button::Button(int repeat_delay, int repeat_rate, bool repeat_t)

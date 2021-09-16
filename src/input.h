@@ -45,6 +45,7 @@ public:
   inline bool Left() const { return controller_.left.GetState(); };
   inline bool Right() const { return controller_.right.GetState(); };
   inline bool Action() const { return controller_.action.GetState(); };
+  inline bool Pause() const { return controller_.pause.GetState(); };
   inline bool Quit() const { return controller_.quit.GetState(); };
 
 private:
