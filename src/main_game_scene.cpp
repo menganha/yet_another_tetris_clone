@@ -5,18 +5,23 @@
 MainGameScene::MainGameScene(SDL_Renderer* renderer, TTF_Font* font)
   : renderer_{ renderer }
   , game_over_{ false }
+  , pause_{ false }
   , is_running_{ true }
   , score_{ 0 }
-  , level_{ 1 }
+  , total_cleared_lines_{ 0 }
+  , level_{ 0 }
   , next_scene_type_{ SceneType::kNoScene }
-  , input_{ 3, 10, 5 }
+  , input_{ 2, 16, 6 }
   , ui{ renderer, font }
   , tetromino_manager_{}
   , pTetromino_{ tetromino_manager_.GetNextTetromino() }
   , lock_delay_{ 30 }
-  , fall_delay_{ 50 }
+  , fall_delay_{ 48 }
   , sound_block_lands_{ "block_lands.wav" }
   , sound_clear_rows_{ "clear_rows.wav" }
+  , sound_block_moves_{ "move_tetromino.wav" }
+  , sound_block_rotates_{ "rotate.wav" }
+  , in_game_menu_{ renderer, font }
 {
   lock_delay_.Reset();
   fall_delay_.Reset();
@@ -25,7 +30,6 @@ MainGameScene::MainGameScene(SDL_Renderer* renderer, TTF_Font* font)
 void
 MainGameScene::Restart()
 {
-  // TODO: RESTART should be a private method and should be run always on exit!
   game_over_ = false;
   is_running_ = true;
   lock_delay_.Reset();
@@ -42,14 +46,24 @@ MainGameScene::RunLoop()
 {
   while (is_running_) {
     input_.Update();
-    if (not game_over_) {
-      Update();
-    } else {
-      HandleGameOver();
+
+    if (input_.Quit()) {
+      is_running_ = false;
+      next_scene_type_ = SceneType::kNoScene;
+    } else if (input_.Pause()) {
+      pause_ = not pause_;
     }
+
+    if (game_over_ or pause_) {
+      UpdatePauseScreen();
+    } else {
+      Update();
+    }
+
     Render();
     Draw();
   }
+  Restart();
 }
 
 SceneType
@@ -59,17 +73,31 @@ MainGameScene::NextSceneType() const
 }
 
 void
-MainGameScene::HandleGameOver()
+MainGameScene::UpdatePauseScreen()
 {
-  // Set all cells row by row: grid_.set_cell()
-  // Release until all cells have been filled then show Game Over message.
-  // reset input
-  if (input_.Quit()) {
-    is_running_ = false;
-    next_scene_type_ = SceneType::kNoScene;
+  in_game_menu_.Update();
+
+  if (input_.Up()) {
+    in_game_menu_.current_selected_item -= 1;
+    in_game_menu_.current_selected_item = std::max(in_game_menu_.current_selected_item, 0);
+  } else if (input_.Down()) {
+    in_game_menu_.current_selected_item += 1;
+    in_game_menu_.current_selected_item = std::min(in_game_menu_.current_selected_item, 1);
   }
-  if (input_.Action()) {
-    Restart();
+
+  if (in_game_menu_.current_selected_item == 0) {
+    if (game_over_ and input_.Action()) {
+      Restart();
+    } else if (pause_ and input_.Action()) {
+      pause_ = false;
+    }
+  } else if (in_game_menu_.current_selected_item == 1) {
+    if (input_.Action()) {
+      is_running_ = false;
+      pause_ = false;
+      game_over_ = false;
+      next_scene_type_ = SceneType::kTitleScreen;
+    }
   }
 }
 
@@ -77,60 +105,23 @@ void
 MainGameScene::Update()
 {
 
-  if (input_.Quit()) {
-    is_running_ = false;
-    next_scene_type_ = SceneType::kNoScene;
-  }
-
   // Save Coordinates and update the delay counter
   pTetromino_->CacheCoordinates();
   fall_delay_.Update();
 
-  // Handle all input
-  // Let tetromino fall if the frame delay is completed or doing a soft drop and no tetromino is below it
-  if ((fall_delay_.isDone() or input_.Down()) and not pTetromino_->Lands(grid_)) {
-    pTetromino_->Move(0, constant::kCellSize);
-    fall_delay_.Reset();
-    return;
-  }
-  if (input_.Left()) {
-    pTetromino_->Move(-constant::kCellSize, 0);
-  }
-  if (input_.Right()) {
-    pTetromino_->Move(constant::kCellSize, 0);
-  }
-  if (pTetromino_->Collides(grid_)) {
-    pTetromino_->RestoreFromCache();
-  }
-  if (input_.Action()) {
-    pTetromino_->CacheCoordinates();
-    pTetromino_->Rotate();
-    if (pTetromino_->Collides(grid_)) {
-      pTetromino_->RestoreFromCache();
-    }
-  }
-
-  // Check if tetromino is below current piece and starts the lock counter
-  if (pTetromino_->Lands(grid_)) {
-    lock_delay_.Update();
-  } else {
-    lock_delay_.Reset();
-  }
-
   // Wait lock_delay to lock the pieces onto the grid
   if (lock_delay_.isDone()) {
     lock_delay_.Reset();
-    sound_block_lands_.Play();
     for (SDL_Point indices : pTetromino_->get_containing_cell_indices()) {
       grid_.set_cell(indices.x, indices.y, true, pTetromino_->GetColor());
     }
+    sound_block_lands_.Play();
     // Update grid and counts cleared rows
     grid_.Update();
     if (grid_.get_completed_rows() != 0) {
       sound_clear_rows_.Play();
-      score_ += ClearedRowsToScore(grid_.get_completed_rows());
-      ui.UpdateScore(score_);
-    } 
+      HandleScoring(grid_.get_completed_rows());
+    }
     // Get Next Tetromino
     pTetromino_ = tetromino_manager_.GetNextTetromino();
     pTetromino_->ResetPosition();
@@ -140,6 +131,49 @@ MainGameScene::Update()
     if (pTetromino_->Collides(grid_)) {
       game_over_ = true;
     }
+    return;
+  }
+
+  // Handle all input
+  // Let tetromino fall if the frame delay is completed or doing a soft drop and no tetromino is below it
+  if ((fall_delay_.isDone() or input_.Down()) and not pTetromino_->Lands(grid_)) {
+    pTetromino_->Move(0, constant::kCellSize);
+    fall_delay_.Reset();
+    return;
+  }
+
+  bool play_move_sound = false;
+  if (input_.Left()) {
+    pTetromino_->Move(-constant::kCellSize, 0);
+    play_move_sound = true;
+  }
+  if (input_.Right()) {
+    pTetromino_->Move(constant::kCellSize, 0);
+    play_move_sound = true;
+  }
+  if (pTetromino_->Collides(grid_)) {
+    pTetromino_->RestoreFromCache();
+    play_move_sound = false;
+  }
+  if (play_move_sound) {
+    sound_block_moves_.Play();
+  }
+
+  if (input_.Action()) {
+    pTetromino_->CacheCoordinates();
+    pTetromino_->Rotate();
+    if (pTetromino_->Collides(grid_)) {
+      pTetromino_->RestoreFromCache();
+    } else {
+      sound_block_rotates_.Play();
+    }
+  }
+
+  // Check if tetromino is below current piece and starts the lock counter
+  if (pTetromino_->Lands(grid_)) {
+    lock_delay_.Update();
+  } else {
+    lock_delay_.Reset();
   }
 }
 
@@ -151,7 +185,10 @@ MainGameScene::Render()
   grid_.Render(renderer_);
   pTetromino_->Render(renderer_);
   tetromino_manager_.RenderCachedTetromino(renderer_);
-  ui.Render(game_over_);
+  ui.Render();
+  if (game_over_ or pause_) {
+    in_game_menu_.Render(game_over_);
+  }
 }
 
 void
@@ -160,16 +197,27 @@ MainGameScene::Draw()
   SDL_RenderPresent(renderer_);
 }
 
-int
-MainGameScene::ClearedRowsToScore(int const cleared_rows) const
+void
+MainGameScene::HandleScoring(int const cleared_rows)
 {
+  // Update Score
   if (cleared_rows == 4) {
-    return 800 * level_;
+    score_ += 1200 * (level_ + 1);
   } else if (cleared_rows == 3) {
-    return 500 * level_;
+    score_ += 300 * (level_ + 1);
   } else if (cleared_rows == 2) {
-    return 300 * level_;
+    score_ += 100 * (level_ + 1);
   } else { // just one row
-    return 100 * level_;
+    score_ += 40 * (level_ + 1);
+  }
+  ui.UpdateScore(score_);
+
+  // Update Level
+  total_cleared_lines_ += cleared_rows;
+  if (total_cleared_lines_/10 > level_ + 1){
+    level_ += 1;
+    int n_frames_fall_delay = std::max(48 - 5 * level_, 5);
+    fall_delay_.ChangeNumberOfFrames(n_frames_fall_delay);
+    ui.UpdateLevel(level_);
   }
 }

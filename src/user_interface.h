@@ -10,7 +10,7 @@ class UserInterface
 {
 public:
   UserInterface(SDL_Renderer* renderer, TTF_Font* font);
-  void Render(bool game_over);
+  void Render();
   void UpdateScore(int new_score);
   void UpdateLevel(int new_level);
 
@@ -20,7 +20,6 @@ private:
   Text        score_value_text_;
   Text        level_text_;
   Text        level_value_text_;
-  Text        game_over_text_;
 
   std::string GetPaddedString(int new_value, int n_padding_zeros);
 };

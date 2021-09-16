@@ -54,6 +54,9 @@ TitleScreenScene::RunLoop()
     Update();
     Draw();
   }
+  exit_ = false;
+  current_selected_item = 0;
+  menu_change_state = false;
 }
 
 SceneType

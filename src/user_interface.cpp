@@ -16,22 +16,16 @@ UserInterface::UserInterface(SDL_Renderer* renderer, TTF_Font* font)
                        colors::WHITE,
                        ui::kLevelValueTextPosX,
                        ui::kLevelValueTextPosY }
-  , game_over_text_{ renderer, font, "GAME OVER", colors::WHITE, ui::kGameOverTextPosX, ui::kGameOverTextPosY }
-
 {}
 
 void
-UserInterface::Render(bool game_over)
+UserInterface::Render()
 {
   next_piece_text_.Render();
   score_text_.Render();
   score_value_text_.Render();
   level_text_.Render();
   level_value_text_.Render();
-  if (game_over) {
-    // Overlay game over text over game grid
-    game_over_text_.Render();
-  }
 }
 
 void

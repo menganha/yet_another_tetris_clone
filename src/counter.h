@@ -10,9 +10,10 @@ public:
   void Stop();
   void Update();
   void Reset();
+  void ChangeNumberOfFrames(int new_number_of_frames);
 
 private:
-  const int n_frames_;
+  int n_frames_;
   int counter_;
 };
 

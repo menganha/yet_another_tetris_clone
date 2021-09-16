@@ -30,3 +30,11 @@ Counter::Update()
     ++counter_;
   }
 }
+
+void
+Counter::ChangeNumberOfFrames(int new_number_of_frames)
+{
+  n_frames_ = new_number_of_frames;
+  counter_ = new_number_of_frames;
+}
+
