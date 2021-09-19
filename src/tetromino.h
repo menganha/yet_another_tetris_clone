@@ -35,7 +35,7 @@ public:
   void        Move(int delta_x, int delta_y);
   bool        Collides(const Grid& grid) const;
   bool        Lands(const Grid& grid) const;
-  void        Rotate();
+  void        Rotate(bool direction);
   void        CacheCoordinates();
   void        RestoreFromCache();
   void        Render(SDL_Renderer* renderer) const;

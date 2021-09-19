@@ -60,12 +60,17 @@ Tetromino::Move(int delta_x, int delta_y)
 }
 
 void
-Tetromino::Rotate()
+Tetromino::Rotate(bool direction)
 {
+  //  direction == true means counterclockwise otherwise is clockwise
+  // (x-x0) cos t - (y-y0) sin t
+  // (x-x0) sin t + (y-y0) cos t
   for (std::size_t idx = 0; idx < rel_coord_.size(); ++idx) {
-    int tmp_x = -rel_coord_[idx].y + 2; // (x-x0) cos t - (y-y0) sin t
-    int tmp_y = rel_coord_[idx].x;      // (x-x0) sin t + (y-y0) cos t
-    rel_coord_[idx] = { tmp_x, tmp_y };
+    if (direction) {
+      rel_coord_[idx] = { -rel_coord_[idx].y + 2, rel_coord_[idx].x };
+    } else {
+      rel_coord_[idx] = { rel_coord_[idx].y, -rel_coord_[idx].x + 2 };
+    }
   }
   UpdateAbsCoord();
 }
@@ -163,11 +168,12 @@ Tetromino::Coord const Tetromino::kDefinition[Tetromino::TotalTypes] = {
   { { { 0, 0 }, { 0, 1 }, { 1, 1 }, { 2, 1 } } }, // J block
   { { { 0, 0 }, { 1, 0 }, { 1, 1 }, { 2, 1 } } }, // Z block
   { { { 1, 0 }, { 2, 0 }, { 0, 1 }, { 1, 1 } } }, // S block
-  { { { 1, 0 }, { 2, 0 }, { 1, 1 }, { 2, 1 } } }, // I block
-  { { { 0, 1 }, { 1, 1 }, { 2, 1 }, { 3, 1 } } }  // O block
+  { { { 1, 0 }, { 2, 0 }, { 1, 1 }, { 2, 1 } } }, // O block
+  { { { 0, 1 }, { 1, 1 }, { 2, 1 }, { 3, 1 } } }  // I block
 };
 
 // Adjust the relative initial position so that the I block and O block spawn centerd and the rest rounded to the left.
+// Adjust so that the I block goes one block up
 SDL_Point
 Tetromino::AdjustedInitialPosition(int pos_x, int pos_y)
 {

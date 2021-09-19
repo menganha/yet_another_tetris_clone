@@ -171,9 +171,9 @@ MainGameScene::Update()
     sound_block_moves_.Play();
   }
 
-  if (input_.A()) {
+  if (input_.A() or input_.B()) {
     pTetromino_->CacheCoordinates();
-    pTetromino_->Rotate();
+    pTetromino_->Rotate(input_.A());
     if (pTetromino_->Collides(grid_)) {
       pTetromino_->RestoreFromCache();
     } else {
