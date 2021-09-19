@@ -23,7 +23,7 @@ public:
   };
   using Coord = std::array<SDL_Point, kTetrominoSize>;
   static Coord const kDefinition[TotalTypes]; // Tetrominos definition with respect to a local frame of reference where
-                                              // the point 3,3 is the rotation center. These coordinates represent the
+                                              // the point 1,1 is the rotation center. These coordinates represent the
                                               // block coordinates of in the initial orientation of the tetromino
 
   Tetromino(Type type, const SDL_Color color);

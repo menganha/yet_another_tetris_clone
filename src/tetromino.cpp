@@ -62,9 +62,9 @@ Tetromino::Move(int delta_x, int delta_y)
 void
 Tetromino::Rotate(bool direction)
 {
-  //  direction == true means counterclockwise otherwise is clockwise
-  // (x-x0) cos t - (y-y0) sin t
-  // (x-x0) sin t + (y-y0) cos t
+  //  direction == true means clockwise else counter-clockwise
+  // x_new = (x-x0) cos t - (y-y0) sin t + x0
+  // y_new = (x-x0) sin t + (y-y0) cos t + y0
   for (std::size_t idx = 0; idx < rel_coord_.size(); ++idx) {
     if (direction) {
       rel_coord_[idx] = { -rel_coord_[idx].y + 2, rel_coord_[idx].x };
