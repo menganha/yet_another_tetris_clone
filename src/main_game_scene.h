@@ -26,6 +26,7 @@ private:
   bool             game_over_;
   bool             pause_;
   bool             is_running_;
+  bool             restart_;
   int              score_;
   int              total_cleared_lines_;
   int              level_;
@@ -48,7 +49,7 @@ private:
   void             Draw();
   void             HandleScoring(int const cleared_rows);
   void             UpdatePauseScreen();
-  void             Restart();
+  void             SetToDefault();
 };
 
 #endif

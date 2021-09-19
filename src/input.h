@@ -40,11 +40,13 @@ public:
   ~Input();
 
   void        Update();
+  void        Reset();
   inline bool Up() const { return controller_.up.GetState(); };
   inline bool Down() const { return controller_.down.GetState(); };
   inline bool Left() const { return controller_.left.GetState(); };
   inline bool Right() const { return controller_.right.GetState(); };
-  inline bool Action() const { return controller_.action.GetState(); };
+  inline bool A() const { return controller_.A.GetState(); };
+  inline bool B() const { return controller_.B.GetState(); };
   inline bool Pause() const { return controller_.pause.GetState(); };
   inline bool Quit() const { return controller_.quit.GetState(); };
 
@@ -55,7 +57,8 @@ private:
     Button down;
     Button left;
     Button right;
-    Button action;
+    Button A;
+    Button B;
     Button pause;
     Button quit;
   } controller_;

@@ -2,11 +2,12 @@
 
 Input::Input(int down_key_repeat, int horizontal_key_delay, int horizontal_key_repeat)
   : controller_{
-    { 0, down_key_repeat},                           // up
-    { 0, down_key_repeat},                           // down
+    { 0, down_key_repeat },                          // up
+    { 0, down_key_repeat },                          // down
     { horizontal_key_delay, horizontal_key_repeat }, // left
     { horizontal_key_delay, horizontal_key_repeat }, // right
-    { 0, 0, false },                                 // action
+    { 0, 0, false },                                 // a button
+    { 0, 0, false },                                 // b button
     { 0, 0, false },                                 // pause
     { 0, 0, false },                                 // quit
   }
@@ -45,16 +46,33 @@ Input::Update()
   } else {
     controller_.right.Reset();
   }
-  if (currentKeyStates[SDL_SCANCODE_X]) {
-    controller_.action.Update();
+  if (currentKeyStates[SDL_SCANCODE_Z]) {
+    controller_.A.Update();
   } else {
-    controller_.action.Reset();
+    controller_.A.Reset();
+  }
+  if (currentKeyStates[SDL_SCANCODE_X]) {
+    controller_.B.Update();
+  } else {
+    controller_.B.Reset();
   }
   if (currentKeyStates[SDL_SCANCODE_RETURN]) {
     controller_.pause.Update();
   } else {
     controller_.pause.Reset();
   }
+}
+
+void
+Input::Reset()
+{
+  controller_.up.Reset();
+  controller_.down.Reset();
+  controller_.left.Reset();
+  controller_.right.Reset();
+  controller_.A.Reset();
+  controller_.B.Reset();
+  controller_.pause.Reset();
 }
 
 Button::Button(int repeat_delay, int repeat_rate, bool repeat_t)

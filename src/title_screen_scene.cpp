@@ -1,6 +1,7 @@
 #include "title_screen_scene.h"
 #include "color.h"
 #include <SDL2/SDL_image.h>
+#include "utils.h"
 #include <algorithm>
 
 TitleScreenScene::TitleScreenScene(SDL_Renderer* renderer, TTF_Font* font)
@@ -42,7 +43,7 @@ TitleScreenScene::get_image()
   game_title_image_texture_ = SDL_CreateTextureFromSurface(renderer_, surface);
   game_title_image_position_.w = surface->w;
   game_title_image_position_.h = surface->h;
-  game_title_image_position_.x = (constant::kScreenWidth - game_title_image_position_.w)/2;
+  game_title_image_position_.x = (constant::kScreenWidth - game_title_image_position_.w) / 2;
   game_title_image_position_.y = kTitleYpos;
   SDL_FreeSurface(surface);
 }
@@ -50,13 +51,17 @@ TitleScreenScene::get_image()
 void
 TitleScreenScene::RunLoop()
 {
+
   while (not exit_) {
+    input_.Update();
     Update();
     Draw();
   }
   exit_ = false;
   current_selected_item = 0;
   menu_change_state = false;
+  input_.Reset();
+  utils::Wait(10, renderer_);
 }
 
 SceneType
@@ -68,7 +73,6 @@ TitleScreenScene::NextSceneType() const
 void
 TitleScreenScene::Update()
 {
-  input_.Update();
 
   // logic
   int previous_selected_item = current_selected_item;
@@ -85,11 +89,11 @@ TitleScreenScene::Update()
     menu_change_state = true;
   }
 
-  if (input_.Action() and current_selected_item == 0) {
+  if ((input_.A() or input_.Pause()) and current_selected_item == 0) {
     exit_ = true;
     next_scene_type_ = SceneType::kMainGame;
     menu_confirm_sound_.Play();
-  } else if ((input_.Action() and current_selected_item == 1) or input_.Quit()) {
+  } else if (((input_.A() or input_.Pause()) and current_selected_item == 1) or input_.Quit()) {
     exit_ = true;
     next_scene_type_ = SceneType::kNoScene;
   }

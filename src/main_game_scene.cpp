@@ -1,12 +1,14 @@
 #include "main_game_scene.h"
 #include "color.h"
 #include "constant.h"
+#include "utils.h"
 
 MainGameScene::MainGameScene(SDL_Renderer* renderer, TTF_Font* font)
   : renderer_{ renderer }
   , game_over_{ false }
   , pause_{ false }
   , is_running_{ true }
+  , restart_{ false }
   , score_{ 0 }
   , total_cleared_lines_{ 0 }
   , level_{ 0 }
@@ -28,17 +30,24 @@ MainGameScene::MainGameScene(SDL_Renderer* renderer, TTF_Font* font)
 }
 
 void
-MainGameScene::Restart()
+MainGameScene::SetToDefault()
 {
+  // Sets all variables to the default for starting a new game afresh
   game_over_ = false;
+  pause_ = false;
+  restart_ = false;
   is_running_ = true;
-  lock_delay_.Reset();
-  fall_delay_.Reset();
   score_ = 0;
+  total_cleared_lines_ = 0;
   level_ = 1;
   pTetromino_ = tetromino_manager_.GetNextTetromino();
   pTetromino_->ResetPosition();
+  lock_delay_.Reset();
+  fall_delay_.Reset();
   grid_.ClearGrid();
+  input_.Reset();
+  in_game_menu_.current_selected_item = 0;
+  utils::Wait(10, renderer_);
 }
 
 void
@@ -62,8 +71,12 @@ MainGameScene::RunLoop()
 
     Render();
     Draw();
+
+    if (restart_) {
+      SetToDefault();
+    }
   }
-  Restart();
+  SetToDefault();
 }
 
 SceneType
@@ -86,16 +99,15 @@ MainGameScene::UpdatePauseScreen()
   }
 
   if (in_game_menu_.current_selected_item == 0) {
-    if (game_over_ and input_.Action()) {
-      Restart();
-    } else if (pause_ and input_.Action()) {
+    if (game_over_ and (input_.A())) {
+      restart_ = true;
+    } else if (pause_ and (input_.A())) {
       pause_ = false;
     }
   } else if (in_game_menu_.current_selected_item == 1) {
-    if (input_.Action()) {
+    if (input_.A()) {
       is_running_ = false;
-      pause_ = false;
-      game_over_ = false;
+      /* restart_ = true; */
       next_scene_type_ = SceneType::kTitleScreen;
     }
   }
@@ -159,7 +171,7 @@ MainGameScene::Update()
     sound_block_moves_.Play();
   }
 
-  if (input_.Action()) {
+  if (input_.A()) {
     pTetromino_->CacheCoordinates();
     pTetromino_->Rotate();
     if (pTetromino_->Collides(grid_)) {
@@ -214,7 +226,7 @@ MainGameScene::HandleScoring(int const cleared_rows)
 
   // Update Level
   total_cleared_lines_ += cleared_rows;
-  if (total_cleared_lines_/10 > level_ + 1){
+  if (total_cleared_lines_ / 10 > level_ + 1) {
     level_ += 1;
     int n_frames_fall_delay = std::max(48 - 5 * level_, 5);
     fall_delay_.ChangeNumberOfFrames(n_frames_fall_delay);
