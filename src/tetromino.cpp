@@ -101,6 +101,9 @@ Tetromino::Collides(const Grid& grid) const
 bool
 Tetromino::Lands(const Grid& grid) const
 {
+  /* 
+     Checks if the Tetromino is directly above anothe piece of the grid
+  */
   for (SDL_Point indices : get_containing_cell_indices()) {
     if (indices.y == constant::kNRows - 1) { // If it is the last row
       return true;
@@ -172,11 +175,10 @@ Tetromino::Coord const Tetromino::kDefinition[Tetromino::TotalTypes] = {
   { { { 0, 1 }, { 1, 1 }, { 2, 1 }, { 3, 1 } } }  // I block
 };
 
-// Adjust the relative initial position so that the I block and O block spawn centerd and the rest rounded to the left.
-// Adjust so that the I block goes one block up
 SDL_Point
 Tetromino::AdjustedInitialPosition(int pos_x, int pos_y)
 {
+  // Adjust so that the I block goes one block up
   if (type_ == I_block) {
     pos_y -= constant::kCellSize;
   }
