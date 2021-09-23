@@ -15,7 +15,7 @@ InGameMenu::InGameMenu(SDL_Renderer* renderer, TTF_Font* font)
 
   play_again_text_.Move(pos_x + (width - play_again_text_.Width()) / 2, pos_y + 50);
   resume_text_.Move(pos_x + (width - resume_text_.Width()) / 2, pos_y + 50);
-  exit_text_.Move(pos_x + (width - exit_text_.Width()) / 2, pos_y + 70);
+  exit_text_.Move(pos_x + (width - exit_text_.Width()) / 2, pos_y + 75);
 }
 
 void

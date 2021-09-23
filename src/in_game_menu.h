@@ -21,7 +21,7 @@ private:
   Text                 exit_text_;
   Text                 resume_text_;
 
-  static constexpr int width = constant::kScreenWidth * 0.3;
+  static constexpr int width = constant::kScreenWidth * 0.4;
   static constexpr int pos_x = (constant::kScreenWidth - width) / 2;
   static constexpr int height = 100;
   static constexpr int pos_y = (constant::kScreenHeight - height) / 2;
