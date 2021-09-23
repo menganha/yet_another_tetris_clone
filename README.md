@@ -42,7 +42,7 @@ Tetris clone made with C++ and the SDL 2.0 library.
 
 ## Acknowledgements
 
-  * Fonts from [Cody "CodeMan38" Boisclair](https://github.com/codeman38)
+  * PressStart2P fonts from [Cody "CodeMan38" Boisclair](https://github.com/codeman38)
   * Sound Effects created with [sfxr](https://www.drpetter.se/project_sfxr.html) from Thomas Pettersson
   * General Information about Tetris from [TetrisWiki](https://tetris.wiki)
 
