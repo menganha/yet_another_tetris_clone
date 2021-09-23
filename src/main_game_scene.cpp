@@ -40,6 +40,8 @@ MainGameScene::SetToDefault()
   score_ = 0;
   total_cleared_lines_ = 0;
   level_ = 0;
+  ui.UpdateLevel(level_);
+  fall_delay_.ChangeNumberOfFrames(48);
   pTetromino_ = tetromino_manager_.GetNextTetromino();
   pTetromino_->ResetPosition();
   lock_delay_.Reset();
