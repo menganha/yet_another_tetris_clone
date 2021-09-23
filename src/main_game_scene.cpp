@@ -140,11 +140,14 @@ MainGameScene::Update()
 
   if (input_.A() or input_.B()) {
     pTetromino_->CacheCoordinates();
-    pTetromino_->Rotate(input_.A());
-    if (pTetromino_->Collides(grid_)) {
-      pTetromino_->RestoreFromCache();
-    } else {
-      sound_block_rotates_.Play();
+    for (int idx = 0; idx < pTetromino_->get_offset_possibilities(); ++idx) {
+      pTetromino_->Rotate(input_.A(), idx);
+      if (pTetromino_->Collides(grid_)) {
+        pTetromino_->RestoreFromCache();
+      } else {
+        sound_block_rotates_.Play();
+        break;
+      }
     }
   }
 
@@ -155,7 +158,6 @@ MainGameScene::Update()
     fall_delay_.Reset();
     return;
   }
-
 
   // Check if tetromino is below current piece and starts the lock counter
   if (pTetromino_->Lands(grid_)) {

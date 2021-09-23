@@ -21,10 +21,25 @@ public:
     I_block,
     TotalTypes
   };
+  enum RotationState // Using the same lables as in the tetris wiki
+  {
+    rot_0,
+    rot_R,
+    rot_2,
+    rot_L,
+    TotalRotationTypes
+  };
   using Coord = std::array<SDL_Point, kTetrominoSize>;
   static Coord const kDefinition[TotalTypes]; // Tetrominos definition with respect to a local frame of reference where
                                               // the point 1,1 is the rotation center. These coordinates represent the
                                               // block coordinates of in the initial orientation of the tetromino
+
+  // Offset Data used for the Super Rotation System
+  static int const   offset_possibilities_Tetromino = 5;
+  static int const   offset_possibilities_O_Tetromino = 1;
+  static std::array<SDL_Point, TotalRotationTypes> const OffSetData[offset_possibilities_Tetromino];
+  static std::array<SDL_Point, TotalRotationTypes> const I_Tetromino_OffSetData[offset_possibilities_Tetromino];
+  static std::array<SDL_Point, TotalRotationTypes> const O_Tetromino_OffSetData[offset_possibilities_O_Tetromino];
 
   Tetromino(Type type, const SDL_Color color);
 
@@ -32,10 +47,11 @@ public:
   SDL_Color   GetColor() const;
   Coord       get_containing_cell_indices() const;
   Type        get_type() const;
+  int         get_offset_possibilities() const;
   void        Move(int delta_x, int delta_y);
   bool        Collides(const Grid& grid) const;
   bool        Lands(const Grid& grid) const;
-  void        Rotate(bool direction);
+  void        Rotate(bool direction, int offset_case);
   void        CacheCoordinates();
   void        RestoreFromCache();
   void        Render(SDL_Renderer* renderer) const;
@@ -54,6 +70,10 @@ private:
   Coord           abs_coord_;
   void            UpdateAbsCoord();
   SDL_Point       AdjustedInitialPosition(int pos_x, int pos_y);
+  int             rotation_index_;
+  int             offset_possibilities_;
+  int             cache_rotation_index_;
+  int             GetRotationState(int rotation_index);
 };
 
 #endif
