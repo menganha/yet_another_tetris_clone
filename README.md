@@ -10,6 +10,18 @@
 
 Tetris clone made with C++ and the SDL 2.0 library.
 
+## Features
+
+  * Software-emulated key delay and repeat.
+  * Super Rotation System as in the official tetris guidelines.
+  * NES tetris scoring and leveling systems.
+
+## Controls
+
+  * Move Pieces: Arrow Keys.
+  * Confirm Selection / Rotate Pieces: Z Key, Enter
+  * Rotate Pieces: X Key, Z Key.
+
 ## Requirements
 
   * A GNU/Linux Distribution.
@@ -28,7 +40,9 @@ Tetris clone made with C++ and the SDL 2.0 library.
   * Run `make`
   * Run the executable `bin/tetris`
 
-## Controls
+## Acknowledgements
 
-  * Move Pieces: Arrow Keys.
-  * Confirm Selection / Rotate Pieces: X Key.
+  * Fonts from [Cody "CodeMan38" Boisclair](https://github.com/codeman38)
+  * Sound Effects created with [sfxr](https://www.drpetter.se/project_sfxr.html) from Thomas Pettersson
+  * General Information about Tetris from [TetrisWiki](https://tetris.wiki)
+
