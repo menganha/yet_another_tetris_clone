@@ -37,10 +37,11 @@ MainGameScene::SetToDefault()
   pause_ = false;
   restart_ = false;
   is_running_ = true;
-  score_ = 0;
   total_cleared_lines_ = 0;
+  score_ = 0;
   level_ = 0;
   ui.UpdateLevel(level_);
+  ui.UpdateScore(score_);
   fall_delay_.ChangeNumberOfFrames(48);
   pTetromino_ = tetromino_manager_.GetNextTetromino();
   pTetromino_->ResetPosition();
