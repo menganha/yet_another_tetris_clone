@@ -1,5 +1,5 @@
 *build
-.cache
-bin
-compile_commands.json
+cmake-build*
 *.xcf
+.idea
+.cache

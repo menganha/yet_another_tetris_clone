@@ -1,6 +1,6 @@
 #include "sound.h"
 
-std::filesystem::path const Sound::sound_assets_path_{ "sounds" };
+std::filesystem::path const Sound::sound_assets_path_{ "../sounds" };
 
 Sound::Sound(std::string file_name)
   : chunk_{ Mix_LoadWAV((sound_assets_path_ / file_name).c_str()) }

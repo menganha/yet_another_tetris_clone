@@ -68,7 +68,7 @@ SDLEngine::Init()
     throw std::runtime_error(err_msg + Mix_GetError());
   }
 
-  font_ = TTF_OpenFont("font/PressStart2P.ttf", 20);
+  font_ = TTF_OpenFont("../font/PressStart2P.ttf", 20);
   if (font_ == nullptr) {
     std::string err_msg = "Could not load font! SDL Error: ";
     throw std::runtime_error(err_msg + TTF_GetError());

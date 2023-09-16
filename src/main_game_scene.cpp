@@ -13,7 +13,7 @@ MainGameScene::MainGameScene(SDL_Renderer* renderer, TTF_Font* font)
   , total_cleared_lines_{ 0 }
   , level_{ 0 }
   , next_scene_type_{ SceneType::kNoScene }
-  , input_{ 2, 16, 6 }
+  , input_{ 2, 12, 4 }
   , ui{ renderer, font }
   , tetromino_manager_{}
   , pTetromino_{ tetromino_manager_.GetNextTetromino() }
